@@ -1,0 +1,789 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import time
+import argparse
+import requests
+import hashlib
+import json
+import tkinter as tk
+from tkinter import messagebox, scrolledtext, simpledialog
+
+# --- METADATOS Y CRÉDITOS ---
+# GESTOR DE PAQUETES CREADO POR EL EQUIPO DE DESARROLLO DE NEMÁS OS
+# EL PAQUETE NO ES REDISTRIBUIBLE LEGALMENTE
+# CREDITOS A EL EQUIPO DE NEMÁS OS: Tomás y Neizan (NeMás OS)
+# Uso: tpt (viene integrado en /.local/bin/tpt/tpt.py)
+# Versión: TPT BETA (Revolucionaria con .desktop)
+# Usable en cualquier DISTRO BASADA EN DEBIAN o con dpkg/apt (aunque se puede usar sin eso)
+# Esto viene incluido en casi todas las versiones de Nemás OS
+# HECHO PARA NEMÁS OS
+
+# --- CONSTANTES ---
+PAQUETES_COMPATIBLES = [".py", ".sh", ".deb", ".AppImage", ".tar.gz"]
+RUTA_DESTINO_EJECUTABLES = "/usr/local/bin" # Donde se mueven los scripts .py y .sh
+# Directorio para guardar el estado de TPT (lista de paquetes instalados)
+TPT_STATE_DIR = "/var/lib/tpt"
+TPT_INSTALLED_PACKAGES_FILE = os.path.join(TPT_STATE_DIR, "installed_packages.json")
+# Archivos de configuración de TPT
+TPT_REPOS_LIST = 'tpt-repos.list'
+ACTUAL_BRANCH_TXT = 'actual-branch.txt'
+MIN_ESPACIO_LIBRE_MB = 1 # Espacio mínimo en MB requerido para operar
+
+# Directorio estándar para archivos .desktop a nivel de sistema
+DESKTOP_ENTRY_DIR = "/usr/local/share/applications"
+
+# --- FUNCIONES AUXILIARES ---
+
+def es_root():
+    """Verifica si el script se está ejecutando con privilegios de root."""
+    return os.geteuid() == 0
+
+def elevar_privilegios_con_pkexec():
+    """Intenta elevar privilegios usando pkexec si no se está ejecutando como root."""
+    if not es_root():
+        print("TPT necesita privilegios de root para operar. Intentando elevar con pkexec...")
+        try:
+            subprocess.run(['pkexec', sys.executable] + sys.argv, check=True)
+            sys.exit(0)
+        except FileNotFoundError:
+            mostrar_error_y_salir("pkexec no encontrado. Asegúrate de que esté instalado y configurado.")
+        except subprocess.CalledProcessError:
+            mostrar_error_y_salir("Fallo al elevar privilegios con pkexec. Es posible que necesites configurar Polkit o ejecutar con 'sudo'.")
+        except Exception as e:
+            mostrar_error_y_salir(f"Error inesperado al intentar elevar privilegios: {e}")
+
+def mostrar_mensaje(mensaje, tipo="info", gui_output=None):
+    """Muestra un mensaje al usuario, tanto en consola como en GUI si está disponible."""
+    if gui_output:
+        gui_output.insert(tk.END, f"{mensaje}\n")
+        gui_output.see(tk.END)
+    else:
+        if tipo == "error":
+            print(f"❌ {mensaje}")
+        elif tipo == "advertencia":
+            print(f"⚠️ {mensaje}")
+        else:
+            print(f"✅ {mensaje}")
+
+def mostrar_error_y_salir(mensaje, codigo_salida=1, gui_output=None):
+    """Muestra un mensaje de error y sale del script."""
+    mostrar_mensaje(mensaje, tipo="error", gui_output=gui_output)
+    if gui_output:
+        messagebox.showerror("Error de TPT", mensaje)
+    sys.exit(codigo_salida)
+
+def obtener_entrada_usuario(mensaje, gui_input_func=None):
+    """Obtiene una entrada de usuario, desde consola o GUI (si gui_input_func es provisto)."""
+    if gui_input_func:
+        return gui_input_func(mensaje)
+    return input(f"{mensaje}: ").strip()
+
+def verificar_espacio_libre(gui_output=None):
+    """Verifica si hay suficiente espacio libre en el disco."""
+    try:
+        statvfs = os.statvfs('/')
+        espacio_libre_bytes = statvfs.f_bfree * statvfs.f_frsize
+        espacio_libre_mb = espacio_libre_bytes / (1024 * 1024)
+        if espacio_libre_mb < MIN_ESPACIO_LIBRE_MB:
+            mostrar_error_y_salir(f"Espacio en disco insuficiente. Se requieren {MIN_ESPACIO_LIBRE_MB} MB. Disponible: {espacio_libre_mb:.2f} MB.", gui_output=gui_output)
+        mostrar_mensaje(f"Espacio en disco disponible: {espacio_libre_mb:.2f} MB.", gui_output=gui_output)
+    except Exception as e:
+        mostrar_mensaje(f"No se pudo verificar el espacio en disco: {e}", tipo="advertencia", gui_output=gui_output)
+
+def calcular_md5(ruta_archivo):
+    """Calcula el hash MD5 de un archivo."""
+    hash_md5 = hashlib.md5()
+    try:
+        with open(ruta_archivo, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+    except FileNotFoundError:
+        return None
+
+def crear_archivos_config_iniciales(gui_output=None):
+    """Crea los archivos de configuración iniciales si no existen."""
+    if not os.path.exists(TPT_STATE_DIR):
+        try:
+            os.makedirs(TPT_STATE_DIR, exist_ok=True)
+            mostrar_mensaje(f"Directorio de estado de TPT creado: {TPT_STATE_DIR}", gui_output=gui_output)
+        except OSError as e:
+            mostrar_error_y_salir(f"Error al crear el directorio de estado de TPT {TPT_STATE_DIR}: {e}", gui_output=gui_output)
+
+    if not os.path.exists(TPT_REPOS_LIST):
+        mostrar_mensaje(f"Creando '{TPT_REPOS_LIST}' con repositorios por defecto...", gui_output=gui_output)
+        try:
+            with open(TPT_REPOS_LIST, 'w') as f:
+                f.write("github.com/tovicito/NemasOS/\n")
+                f.write("github.com/sindresorhus/awesome-cli-apps/raw/main/cli-apps/\n")
+                f.write("github.com/soimort/you-get/raw/master/src/\n")
+                f.write("github.com/Pylogmon/py_cli_tools/raw/main/\n")
+                f.write("github.com/sharkdp/fd/raw/master/contrib/completion/\n")
+            mostrar_mensaje(f"'{TPT_REPOS_LIST}' creado con éxito.", gui_output=gui_output)
+        except IOError as e:
+            mostrar_error_y_salir(f"Error al crear {TPT_REPOS_LIST}: {e}", gui_output=gui_output)
+
+    if not os.path.exists(ACTUAL_BRANCH_TXT):
+        mostrar_mensaje(f"Creando '{ACTUAL_BRANCH_TXT}' con rama 'regular' por defecto...", gui_output=gui_output)
+        try:
+            with open(ACTUAL_BRANCH_TXT, 'w') as f:
+                f.write("regular\n")
+            mostrar_mensaje(f"'{ACTUAL_BRANCH_TXT}' creado con éxito.", gui_output=gui_output)
+        except IOError as e:
+            mostrar_error_y_salir(f"Error al crear {ACTUAL_BRANCH_TXT}: {e}", gui_output=gui_output)
+
+def load_installed_packages():
+    """Carga la lista de paquetes instalados desde el archivo JSON."""
+    if not os.path.exists(TPT_INSTALLED_PACKAGES_FILE):
+        return {}
+    try:
+        with open(TPT_INSTALLED_PACKAGES_FILE, 'r') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        mostrar_mensaje(f"Advertencia: Archivo de paquetes instalados '{TPT_INSTALLED_PACKAGES_FILE}' corrupto. Se creará uno nuevo.", tipo="advertencia")
+        return {}
+    except IOError as e:
+        mostrar_mensaje(f"Advertencia: No se pudo leer el archivo de paquetes instalados: {e}", tipo="advertencia")
+        return {}
+
+def save_installed_packages(installed_packages):
+    """Guarda la lista de paquetes instalados en el archivo JSON."""
+    try:
+        with open(TPT_INSTALLED_PACKAGES_FILE, 'w') as f:
+            json.dump(installed_packages, f, indent=4)
+    except IOError as e:
+        mostrar_mensaje(f"Error: No se pudo guardar la lista de paquetes instalados: {e}", tipo="error")
+
+def crear_desktop_file(app_name, executable_path, icon_name="utilities-terminal", gui_output=None):
+    """
+    Crea un archivo .desktop para la aplicación.
+    :param app_name: Nombre de la aplicación (para el menú).
+    :param executable_path: Ruta completa al ejecutable.
+    :param icon_name: Nombre del icono (ej. "utilities-terminal") o ruta completa a un archivo .png/.svg.
+    """
+    desktop_file_content = f"""[Desktop Entry]
+Version=1.0
+Type=Application
+Name={app_name}
+Exec={executable_path}
+Icon={icon_name}
+Terminal=true
+Categories=Utility;Application;
+Comment=Aplicación instalada por TPT
+"""
+    desktop_filename = f"{app_name}.desktop"
+    desktop_filepath = os.path.join(DESKTOP_ENTRY_DIR, desktop_filename)
+
+    try:
+        if not os.path.exists(DESKTOP_ENTRY_DIR):
+            os.makedirs(DESKTOP_ENTRY_DIR, exist_ok=True)
+            mostrar_mensaje(f"Directorio de .desktop creado: {DESKTOP_ENTRY_DIR}", gui_output=gui_output)
+
+        with open(desktop_filepath, 'w') as f:
+            f.write(desktop_file_content)
+        subprocess.run(["chmod", "644", desktop_filepath], check=True, text=True) # Permisos de lectura
+        mostrar_mensaje(f"Archivo .desktop creado para '{app_name}' en '{desktop_filepath}'.", gui_output=gui_output)
+        return desktop_filepath
+    except Exception as e:
+        mostrar_mensaje(f"Error al crear el archivo .desktop para '{app_name}': {e}", tipo="error", gui_output=gui_output)
+        return None
+
+# --- FUNCIONES DE TPT ---
+
+def instalar_paquete(nombre_app, extension, ruta_origen, nombre_ejecutable=None, ruta_destino=None, verificar_md5_oficial=False, gui_output=None):
+    """
+    Instala un paquete en el sistema.
+    :param nombre_app: Nombre de la aplicación (para registro).
+    :param extension: Extensión del paquete (ej. '.deb', '.py', '.sh').
+    :param ruta_origen: Ruta del archivo del paquete descargado/local.
+    :param nombre_ejecutable: Nombre para el ejecutable (solo para .sh/.py).
+    :param ruta_destino: Ruta completa de destino para el ejecutable (solo para .sh/.py).
+    :param verificar_md5_oficial: Booleano para indicar si se debe verificar el MD5 (para paquetes descargados).
+    :param gui_output: Widget de texto para salida en GUI.
+    """
+    installed_packages = load_installed_packages()
+    desktop_file_path = None # Para registrar la ruta del .desktop si se crea
+
+    if verificar_md5_oficial:
+        md5_url = ruta_origen + ".md5"
+        try:
+            mostrar_mensaje(f"Descargando MD5 para verificación desde: {md5_url}", gui_output=gui_output)
+            r = requests.get(md5_url, stream=True, timeout=10)
+            r.raise_for_status()
+            md5_remoto = r.text.strip()
+            md5_local = calcular_md5(ruta_origen)
+
+            if md5_local == md5_remoto:
+                mostrar_mensaje("Verificación MD5 exitosa: El paquete es oficial y no ha sido alterado.", gui_output=gui_output)
+            else:
+                mostrar_error_y_salir(f"Fallo en la verificación MD5. El paquete puede estar corrupto o no es oficial. MD5 local: {md5_local}, MD5 remoto: {md5_remoto}", gui_output=gui_output)
+        except requests.exceptions.RequestException as e:
+            mostrar_mensaje(f"No se pudo descargar el archivo MD5 o hubo un error de red: {e}. Procediendo sin verificación.", tipo="advertencia", gui_output=gui_output)
+        except Exception as e:
+            mostrar_mensaje(f"Error inesperado al verificar MD5: {e}. Procediendo sin verificación.", tipo="advertencia", gui_output=gui_output)
+
+    # --- Lógica para diferentes tipos de paquetes ---
+    if extension == ".deb":
+        mostrar_mensaje(f"Instalando paquete .deb: {ruta_origen}", gui_output=gui_output)
+        try:
+            subprocess.run(["dpkg", "-i", ruta_origen], check=True, text=True)
+            mostrar_mensaje("Intentando resolver dependencias con apt...", gui_output=gui_output)
+            subprocess.run(["apt", "install", "-f"], check=True, text=True)
+            mostrar_mensaje("Paquete .deb instalado y dependencias resueltas correctamente.", gui_output=gui_output)
+        except subprocess.CalledProcessError as e:
+            mostrar_error_y_salir(f"Error al instalar el paquete .deb o sus dependencias: {e.stderr}", gui_output=gui_output)
+        except FileNotFoundError:
+            mostrar_error_y_salir("Comandos 'dpkg' o 'apt' no encontrados. Asegúrate de que apt esté instalado.", gui_output=gui_output)
+        
+        # Después de instalar .deb, buscar nombredelpaquete.deps.txt para dependencias adicionales
+        deps_file = ruta_origen.replace(extension, '.deps.txt')
+        if os.path.exists(deps_file):
+            mostrar_mensaje(f"Se encontró archivo de dependencias '{deps_file}'.", gui_output=gui_output)
+            try:
+                with open(deps_file, 'r') as f:
+                    dependencias = [dep.strip() for dep in f if dep.strip()]
+                if dependencias:
+                    mostrar_mensaje(f"Instalando dependencias adicionales: {', '.join(dependencias)}", gui_output=gui_output)
+                    subprocess.run(["apt", "install", "-y"] + dependencias, check=True, text=True)
+                    mostrar_mensaje("Dependencias adicionales instaladas correctamente.", gui_output=gui_output)
+                else:
+                    mostrar_mensaje("Archivo de dependencias vacío o sin dependencias listadas.", tipo="advertencia", gui_output=gui_output)
+            except IOError as e:
+                mostrar_mensaje(f"Error al leer el archivo de dependencias: {e}", tipo="advertencia", gui_output=gui_output)
+            except subprocess.CalledProcessError as e:
+                mostrar_mensaje(f"Error al instalar dependencias adicionales: {e.stderr}", tipo="error", gui_output=gui_output)
+        else:
+            mostrar_mensaje("No se encontró archivo de dependencias (.deps.txt) para este paquete.", tipo="advertencia", gui_output=gui_output)
+        
+        # Registrar el paquete instalado
+        installed_packages[nombre_app] = {'extension': extension, 'ruta_origen': ruta_origen, 'instalado_a': 'dpkg'}
+
+    elif extension in [".sh", ".py"]:
+        if not nombre_ejecutable or not ruta_destino:
+            mostrar_error_y_salir("Faltan parámetros para instalar scripts (.sh/.py).", gui_output=gui_output)
+        mostrar_mensaje(f"El paquete se moverá a: {ruta_destino}", gui_output=gui_output)
+        time.sleep(1)
+        
+        try:
+            subprocess.run(["chmod", "+x", ruta_origen], check=True, text=True)
+        except subprocess.CalledProcessError as e:
+            mostrar_error_y_salir(f"Error al dar permisos de ejecución al script: {e.stderr}", gui_output=gui_output)
+        
+        try:
+            subprocess.run(["mv", ruta_origen, ruta_destino], check=True, text=True)
+            mostrar_mensaje(f"Paquete '{nombre_ejecutable}{extension}' instalado como ejecutable.", gui_output=gui_output)
+            
+            # --- CREAR ARCHIVO .DESKTOP ---
+            desktop_file_path = crear_desktop_file(nombre_app, ruta_destino, gui_output=gui_output)
+            
+            # Registrar el paquete instalado
+            installed_packages[nombre_app] = {
+                'extension': extension,
+                'ruta_origen': ruta_origen,
+                'instalado_a': ruta_destino,
+                'desktop_file': desktop_file_path # Guardar la ruta del .desktop
+            }
+        except subprocess.CalledProcessError as e:
+            mostrar_error_y_salir(f"Error al mover el archivo al destino: {e.stderr}", gui_output=gui_output)
+        except FileNotFoundError:
+            mostrar_error_y_salir("Comando 'mv' no encontrado. Algo anda mal en el sistema.", gui_output=gui_output)
+    
+    elif extension == ".AppImage":
+        mostrar_mensaje(f"Instalando AppImage: {ruta_origen}", gui_output=gui_output)
+        appimage_target_dir = "/opt/AppImages"
+        os.makedirs(appimage_target_dir, exist_ok=True)
+        appimage_name = os.path.basename(ruta_origen)
+        final_appimage_path = os.path.join(appimage_target_dir, appimage_name)
+        try:
+            subprocess.run(["mv", ruta_origen, final_appimage_path], check=True, text=True)
+            subprocess.run(["chmod", "+x", final_appimage_path], check=True, text=True)
+            symlink_path = os.path.join(RUTA_DESTINO_EJECUTABLES, nombre_app)
+            if os.path.exists(symlink_path):
+                os.remove(symlink_path)
+            os.symlink(final_appimage_path, symlink_path)
+            mostrar_mensaje(f"AppImage '{appimage_name}' instalada en '{final_appimage_path}' y enlazada como '{nombre_app}'.", gui_output=gui_output)
+            
+            # --- CREAR ARCHIVO .DESKTOP PARA APPIMAGE ---
+            desktop_file_path = crear_desktop_file(nombre_app, symlink_path, icon_name=final_appimage_path, gui_output=gui_output) # Usar la propia AppImage como icono
+            
+            installed_packages[nombre_app] = {
+                'extension': extension,
+                'ruta_origen': ruta_origen,
+                'instalado_a': final_appimage_path,
+                'symlink': symlink_path,
+                'desktop_file': desktop_file_path
+            }
+        except subprocess.CalledProcessError as e:
+            mostrar_error_y_salir(f"Error al instalar AppImage: {e.stderr}", gui_output=gui_output)
+        except Exception as e:
+            mostrar_error_y_salir(f"Error inesperado al instalar AppImage: {e}", gui_output=gui_output)
+
+    elif extension == ".tar.gz":
+        mostrar_mensaje(f"Instalando desde tar.gz: {ruta_origen}", gui_output=gui_output)
+        extract_dir = os.path.join("/opt", nombre_app)
+        os.makedirs(extract_dir, exist_ok=True)
+        try:
+            subprocess.run(["tar", "-xzf", ruta_origen, "-C", extract_dir], check=True, text=True)
+            mostrar_mensaje(f"Paquete tar.gz descomprimido en '{extract_dir}'.", gui_output=gui_output)
+            
+            ejecutable_path = None
+            if os.path.exists(os.path.join(extract_dir, nombre_app)):
+                ejecutable_path = os.path.join(extract_dir, nombre_app)
+            elif os.path.exists(os.path.join(extract_dir, 'bin', nombre_app)):
+                ejecutable_path = os.path.join(extract_dir, 'bin', nombre_app)
+            
+            if ejecutable_path and os.path.isfile(ejecutable_path):
+                subprocess.run(["chmod", "+x", ejecutable_path], check=True, text=True)
+                symlink_path = os.path.join(RUTA_DESTINO_EJECUTABLES, nombre_app)
+                if os.path.exists(symlink_path):
+                    os.remove(symlink_path)
+                os.symlink(ejecutable_path, symlink_path)
+                mostrar_mensaje(f"Ejecutable '{ejecutable_path}' enlazado como '{nombre_app}'.", gui_output=gui_output)
+
+                # --- CREAR ARCHIVO .DESKTOP PARA TAR.GZ ---
+                desktop_file_path = crear_desktop_file(nombre_app, symlink_path, gui_output=gui_output) # Icono genérico
+                
+                installed_packages[nombre_app] = {
+                    'extension': extension,
+                    'ruta_origen': ruta_origen,
+                    'instalado_a': extract_dir,
+                    'ejecutable': ejecutable_path,
+                    'symlink': symlink_path,
+                    'desktop_file': desktop_file_path
+                }
+            else:
+                mostrar_mensaje(f"No se pudo encontrar un ejecutable principal para '{nombre_app}' en '{extract_dir}'. Instalación incompleta.", tipo="advertencia", gui_output=gui_output)
+                installed_packages[nombre_app] = {'extension': extension, 'ruta_origen': ruta_origen, 'instalado_a': extract_dir, 'ejecutable': None}
+
+        except subprocess.CalledProcessError as e:
+            mostrar_error_y_salir(f"Error al descomprimir o instalar tar.gz: {e.stderr}", gui_output=gui_output)
+        except Exception as e:
+            mostrar_error_y_salir(f"Error inesperado al instalar tar.gz: {e}", gui_output=gui_output)
+    else:
+        mostrar_error_y_salir("Tipo de paquete no manejado.", gui_output=gui_output)
+    
+    # Limpiar el archivo descargado si es el caso
+    if ruta_origen and os.path.exists(ruta_origen) and ruta_origen.startswith('/tmp/'):
+         try:
+             os.remove(ruta_origen)
+             mostrar_mensaje(f"Archivo temporal '{ruta_origen}' eliminado.", gui_output=gui_output)
+         except OSError as e:
+             mostrar_mensaje(f"No se pudo eliminar el archivo temporal '{ruta_origen}': {e}", tipo="advertencia", gui_output=gui_output)
+    
+    save_installed_packages(installed_packages)
+    mostrar_mensaje(f"✅ Paquete '{nombre_app}' instalado con éxito.", gui_output=gui_output)
+
+
+def leer_urls_repositorio(archivo_repos, gui_output=None):
+    """Lee las URLs de repositorios desde el archivo tpt-repos.list."""
+    if not os.path.exists(archivo_repos):
+        mostrar_error_y_salir(f"EL ARCHIVO DE REPOS {archivo_repos} NO EXISTE. No se pueden buscar paquetes remotos.", gui_output=gui_output)
+    try:
+        with open(archivo_repos, 'r') as f:
+            return [linea.strip() for linea in f if linea.strip() and not linea.strip().startswith('#')]
+    except IOError:
+        mostrar_error_y_salir(f"No se pudo leer el archivo de repositorios: {archivo_repos}.", gui_output=gui_output)
+
+def leer_rama_actual(archivo_branch, gui_output=None):
+    """Lee la rama actual (regular/lss) desde el archivo actual-branch.txt."""
+    if not os.path.exists(archivo_branch):
+        mostrar_error_y_salir(f"El archivo de branch actual {archivo_branch} no existe. Asegúrate de que Nemas OS esté configurado.", gui_output=gui_output)
+    try:
+        with open(archivo_branch, 'r') as f:
+            return f.read().strip()
+    except IOError:
+        mostrar_error_y_salir(f"No se pudo leer el archivo de la rama actual: {archivo_branch}.", gui_output=gui_output)
+
+def descargar_remoto(url, nombre_destino_temp, gui_output=None):
+    """Descarga un archivo desde una URL y lo guarda localmente."""
+    mostrar_mensaje(f"Intentando descargar desde: {url}", gui_output=gui_output)
+    try:
+        r = requests.get(url, stream=True, timeout=30)
+        r.raise_for_status()
+
+        with open(nombre_destino_temp, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+        mostrar_mensaje(f"Archivo '{nombre_destino_temp}' descargado con éxito.", gui_output=gui_output)
+        return True
+    except requests.exceptions.Timeout:
+        mostrar_mensaje(f"Tiempo de espera agotado al descargar de {url}.", tipo="error", gui_output=gui_output)
+        return False
+    except requests.exceptions.ConnectionError as e:
+        mostrar_mensaje(f"Error de conexión al descargar de {url}: {e}", tipo="error", gui_output=gui_output)
+        return False
+    except requests.exceptions.RequestException as e:
+        mostrar_mensaje(f"Error al descargar de {url}: {e}", tipo="error", gui_output=gui_output)
+        return False
+    except Exception as e:
+        mostrar_mensaje(f"Ocurrió un error inesperado durante la descarga: {e}", tipo="error", gui_output=gui_output)
+        return False
+
+def instalar_desde_remoto(nombre_app, gui_output=None):
+    """
+    Busca, descarga e instala una aplicación desde los repositorios remotos.
+    """
+    mostrar_mensaje(f"\n🚀 Buscando e instalando '{nombre_app}' desde repositorios remotos...", gui_output=gui_output)
+    repos = leer_urls_repositorio(TPT_REPOS_LIST, gui_output)
+    rama = leer_rama_actual(ACTUAL_BRANCH_TXT, gui_output)
+    mostrar_mensaje(f"Usando rama '{rama}' para la descarga.", gui_output=gui_output)
+
+    if not repos:
+        mostrar_error_y_salir("No hay repositorios configurados en tpt-repos.list.", gui_output=gui_output)
+
+    descargado_con_exito = False
+    ruta_paquete_descargado = None
+    extension_encontrada = None
+
+    for repo_base_url in repos:
+        for ext in PAQUETES_COMPATIBLES:
+            if 'github.com' in repo_base_url:
+                repo_path = repo_base_url.split('github.com/')[-1].strip('/')
+                # Asegurarse de que el repo_path no termine en barra si es un raw/master/src/
+                if repo_path.endswith('/'):
+                    repo_path = repo_path[:-1]
+                url = f"https://raw.githubusercontent.com/{repo_path}/{rama}/{nombre_app}{ext}"
+            else:
+                url = f"{repo_base_url}/{rama}/{nombre_app}{ext}"
+
+            temp_filename = f"/tmp/{nombre_app}{ext}"
+            
+            if descargar_remoto(url, temp_filename, gui_output):
+                ruta_paquete_descargado = temp_filename
+                extension_encontrada = ext
+                descargado_con_exito = True
+                break
+        if descargado_con_exito:
+            break
+
+    if not descargado_con_exito:
+        mostrar_error_y_salir(f"No se pudo encontrar ni descargar el paquete '{nombre_app}' en ningún repositorio compatible.", gui_output=gui_output)
+
+    mostrar_mensaje(f"\nPaquete '{nombre_app}' descargado. Procediendo a la instalación...", gui_output=gui_output)
+
+    # Instalar el paquete descargado en el sistema principal
+    if extension_encontrada in [".sh", ".py"]:
+        nombre_ejecutable = nombre_app
+        ruta_destino_script = os.path.join(RUTA_DESTINO_EJECUTABLES, nombre_ejecutable + extension_encontrada)
+        instalar_paquete(nombre_app, extension_encontrada, ruta_paquete_descargado, nombre_ejecutable, ruta_destino_script, verificar_md5_oficial=True, gui_output=gui_output)
+    else:
+        instalar_paquete(nombre_app, extension_encontrada, ruta_paquete_descargado, verificar_md5_oficial=True, gui_output=gui_output)
+
+def tpt_upgrade_all(gui_output=None):
+    """
+    Actualiza todos los paquetes instalados por TPT.
+    Re-descarga y re-instala para asegurar la última versión.
+    """
+    mostrar_mensaje("\n✨ Iniciando actualización de todos los paquetes instalados por TPT...", gui_output=gui_output)
+    installed_packages = load_installed_packages()
+    if not installed_packages:
+        mostrar_mensaje("  No hay paquetes instalados por TPT para actualizar.", gui_output=gui_output)
+        return
+
+    for app_name, details in list(installed_packages.items()):
+        mostrar_mensaje(f"\n🔄 Actualizando paquete: {app_name} ({details.get('extension', 'desconocido')})...", gui_output=gui_output)
+        try:
+            # Re-instalar desde remoto para actualizar
+            instalar_desde_remoto(app_name, gui_output)
+            mostrar_mensaje(f"✅ '{app_name}' actualizado correctamente.", gui_output=gui_output)
+        except SystemExit:
+            mostrar_mensaje(f"❌ Fallo al actualizar '{app_name}'. Continuando con el siguiente paquete.", tipo="error", gui_output=gui_output)
+        except Exception as e:
+            mostrar_mensaje(f"❌ Error inesperado al actualizar '{app_name}': {e}. Continuando.", tipo="error", gui_output=gui_output)
+    
+    mostrar_mensaje("\n✨ Proceso de actualización de TPT finalizado.", gui_output=gui_output)
+
+def tpt_uninstall(nombre_app, gui_output=None):
+    """
+    Desinstala un paquete instalado por TPT.
+    """
+    mostrar_mensaje(f"\n🗑️ Intentando desinstalar '{nombre_app}'...", gui_output=gui_output)
+    installed_packages = load_installed_packages()
+
+    if nombre_app not in installed_packages:
+        mostrar_mensaje(f"El paquete '{nombre_app}' no está registrado como instalado por TPT.", tipo="advertencia", gui_output=gui_output)
+        return
+
+    details = installed_packages[nombre_app]
+    extension = details.get('extension')
+    instalado_a = details.get('instalado_a')
+    symlink = details.get('symlink')
+    desktop_file = details.get('desktop_file') # Obtener la ruta del .desktop
+
+    try:
+        if extension == ".deb":
+            mostrar_mensaje(f"Desinstalando paquete .deb: {nombre_app}", gui_output=gui_output)
+            subprocess.run(["dpkg", "-r", nombre_app], check=True, text=True)
+            mostrar_mensaje(f"✅ Paquete .deb '{nombre_app}' desinstalado correctamente.", gui_output=gui_output)
+        elif extension in [".sh", ".py"]:
+            if instalado_a and os.path.exists(instalado_a):
+                mostrar_mensaje(f"Eliminando ejecutable: {instalado_a}", gui_output=gui_output)
+                os.remove(instalado_a)
+                mostrar_mensaje(f"✅ Ejecutable '{nombre_app}{extension}' eliminado.", gui_output=gui_output)
+            else:
+                mostrar_mensaje(f"Advertencia: No se encontró el ejecutable para '{nombre_app}{extension}' en '{instalado_a}'.", tipo="advertencia", gui_output=gui_output)
+        elif extension == ".AppImage":
+            if instalado_a and os.path.exists(instalado_a):
+                mostrar_mensaje(f"Eliminando AppImage: {instalado_a}", gui_output=gui_output)
+                os.remove(instalado_a)
+                if symlink and os.path.exists(symlink):
+                    os.remove(symlink)
+                    mostrar_mensaje(f"Symlink '{symlink}' eliminado.", gui_output=gui_output)
+                mostrar_mensaje(f"✅ AppImage '{nombre_app}' desinstalada.", gui_output=gui_output)
+            else:
+                mostrar_mensaje(f"Advertencia: No se encontró la AppImage para '{nombre_app}' en '{instalado_a}'.", tipo="advertencia", gui_output=gui_output)
+        elif extension == ".tar.gz":
+            if instalado_a and os.path.exists(instalado_a):
+                mostrar_mensaje(f"Eliminando directorio de instalación: {instalado_a}", gui_output=gui_output)
+                subprocess.run(["rm", "-rf", instalado_a], check=True, text=True)
+                if symlink and os.path.exists(symlink):
+                    os.remove(symlink)
+                    mostrar_mensaje(f"Symlink '{symlink}' eliminado.", gui_output=gui_output)
+                mostrar_mensaje(f"✅ Paquete tar.gz '{nombre_app}' desinstalado.", gui_output=gui_output)
+            else:
+                mostrar_mensaje(f"Advertencia: No se encontró el directorio de instalación para '{nombre_app}' en '{instalado_a}'.", tipo="advertencia", gui_output=gui_output)
+        else:
+            mostrar_mensaje(f"Tipo de paquete '{extension}' no manejado para desinstalación automática. Por favor, desinstale manualmente.", tipo="advertencia", gui_output=gui_output)
+            return
+
+        # Eliminar el archivo .desktop si existe
+        if desktop_file and os.path.exists(desktop_file):
+            try:
+                os.remove(desktop_file)
+                mostrar_mensaje(f"Archivo .desktop '{desktop_file}' eliminado.", gui_output=gui_output)
+            except OSError as e:
+                mostrar_mensaje(f"No se pudo eliminar el archivo .desktop '{desktop_file}': {e}", tipo="advertencia", gui_output=gui_output)
+
+        del installed_packages[nombre_app]
+        save_installed_packages(installed_packages)
+        mostrar_mensaje(f"✅ '{nombre_app}' desinstalado y eliminado del registro de TPT.", gui_output=gui_output)
+
+    except subprocess.CalledProcessError as e:
+        mostrar_error_y_salir(f"Error al desinstalar '{nombre_app}': {e.stderr}", gui_output=gui_output)
+    except Exception as e:
+        mostrar_error_y_salir(f"Error inesperado al desinstalar '{nombre_app}': {e}", gui_output=gui_output)
+
+def tpt_list_installed(gui_output=None):
+    """Muestra la lista de paquetes instalados por TPT."""
+    mostrar_mensaje("\n📦 Paquetes instalados por TPT:", gui_output=gui_output)
+    installed_packages = load_installed_packages()
+    if not installed_packages:
+        mostrar_mensaje("  No hay paquetes instalados por TPT.", gui_output=gui_output)
+        return
+
+    for app_name, details in installed_packages.items():
+        ext = details.get('extension', 'N/A')
+        instalado_a = details.get('instalado_a', 'N/A')
+        desktop_file = details.get('desktop_file', 'No')
+        mostrar_mensaje(f"  - {app_name} (Tipo: {ext}, Instalado en: {instalado_a}, .desktop: {'Sí' if desktop_file else 'No'})", gui_output=gui_output)
+
+# --- FUNCIONES DE LA GUI (Tkinter) ---
+
+def main_gui():
+    """Función principal para la interfaz gráfica de TPT."""
+    window = tk.Tk()
+    window.title("TPT - Gestor de Paquetes de Nemas OS")
+    window.geometry("700x550")
+    window.resizable(True, True)
+
+    control_frame = tk.Frame(window, padx=10, pady=10)
+    control_frame.pack(side=tk.TOP, fill=tk.X)
+
+    label_app = tk.Label(control_frame, text="Nombre del Paquete:")
+    label_app.pack(side=tk.LEFT, padx=(0, 5))
+    entry_app_name = tk.Entry(control_frame, width=30)
+    entry_app_name.pack(side=tk.LEFT, expand=True, fill=tk.X)
+
+    output_text = scrolledtext.ScrolledText(window, wrap=tk.WORD, height=15, padx=10, pady=10)
+    output_text.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+    def gui_get_input_dialog(prompt):
+        return simpledialog.askstring("Entrada de TPT", prompt)
+
+    def run_install_from_gui():
+        app_name = entry_app_name.get().strip()
+        if not app_name:
+            messagebox.showwarning("Entrada Vacía", "Por favor, ingrese el nombre de un paquete.")
+            return
+        
+        output_text.delete(1.0, tk.END)
+        output_text.insert(tk.END, f"Iniciando instalación de '{app_name}'...\n")
+        
+        try:
+            verificar_espacio_libre(output_text)
+            instalar_desde_remoto(app_name, output_text)
+            messagebox.showinfo("Instalación Completada", f"Paquete '{app_name}' instalado con éxito.")
+        except SystemExit:
+            messagebox.showerror("Fallo en Instalación", f"La instalación de '{app_name}' falló. Verifique la salida.")
+        except Exception as e:
+            messagebox.showerror("Error Inesperado", f"Ocurrió un error inesperado: {e}")
+            output_text.insert(tk.END, f"ERROR INESPERADO: {e}\n")
+
+    def run_uninstall_from_gui():
+        app_name = entry_app_name.get().strip()
+        if not app_name:
+            messagebox.showwarning("Entrada Vacía", "Por favor, ingrese el nombre del paquete a desinstalar.")
+            return
+        
+        if not messagebox.askyesno("Confirmar Desinstalación", f"¿Está seguro de que desea desinstalar '{app_name}'?"):
+            return
+
+        output_text.delete(1.0, tk.END)
+        output_text.insert(tk.END, f"Iniciando desinstalación de '{app_name}'...\n")
+
+        try:
+            tpt_uninstall(app_name, output_text)
+            messagebox.showinfo("Desinstalación Completada", f"Paquete '{app_name}' desinstalado con éxito.")
+        except SystemExit:
+            messagebox.showerror("Fallo en Desinstalación", f"La desinstalación de '{app_name}' falló. Verifique la salida.")
+        except Exception as e:
+            messagebox.showerror("Error Inesperado", f"Ocurrió un error inesperado: {e}")
+            output_text.insert(tk.END, f"ERROR INESPERADO: {e}\n")
+
+    def run_upgrade_all_from_gui():
+        if not messagebox.askyesno("Confirmar Actualización", "¿Está seguro de que desea actualizar todos los paquetes instalados por TPT? Esto puede llevar tiempo."):
+            return
+
+        output_text.delete(1.0, tk.END)
+        output_text.insert(tk.END, "Iniciando actualización de todos los paquetes...\n")
+        try:
+            verificar_espacio_libre(output_text)
+            tpt_upgrade_all(output_text)
+            messagebox.showinfo("Actualización Completada", "Todos los paquetes de TPT han sido actualizados (o se intentó).")
+        except SystemExit:
+            messagebox.showerror("Fallo en Actualización", "La actualización de paquetes falló. Verifique la salida.")
+        except Exception as e:
+            messagebox.showerror("Error Inesperado", f"Ocurrió un error inesperado: {e}")
+            output_text.insert(tk.END, f"ERROR INESPERADO: {e}\n")
+
+    def run_list_installed_from_gui():
+        output_text.delete(1.0, tk.END)
+        output_text.insert(tk.END, "Listando paquetes instalados por TPT...\n")
+        try:
+            tpt_list_installed(output_text)
+        except Exception as e:
+            messagebox.showerror("Error al Listar", f"Ocurrió un error al listar paquetes: {e}")
+            output_text.insert(tk.END, f"ERROR INESPERADO: {e}\n")
+
+    def run_local_install_from_gui():
+        output_text.delete(1.0, tk.END)
+        output_text.insert(tk.END, "Iniciando instalación local...\n")
+        try:
+            verificar_espacio_libre(output_text)
+            extension_elegida = gui_get_input_dialog("Diga la extensión de su paquete (ej: .deb, .sh, .py, .AppImage, .tar.gz)")
+            if not extension_elegida: return # Usuario canceló
+            extension_validada = comprobacion_extension(extension_elegida, output_text)
+            
+            ruta_paquete_local = gui_get_input_dialog("Díganos la ruta exacta del paquete (ej: /home/usuario/paquete.deb)")
+            if not ruta_paquete_local: return # Usuario canceló
+            if not os.path.exists(ruta_paquete_local):
+                messagebox.showerror("Error", "Esa ruta no existe.")
+                return
+
+            nombre_app_local = os.path.splitext(os.path.basename(ruta_paquete_local))[0]
+
+            if extension_validada in [".py", ".sh"]:
+                nombre_ejecutable = gui_get_input_dialog("Elija un nombre para el ejecutable (SIN ESPACIOS)")
+                if not nombre_ejecutable: return # Usuario canceló
+                ruta_destino_ejecutable = os.path.join(RUTA_DESTINO_EJECUTABLES, nombre_ejecutable + extension_validada)
+                
+                if os.path.exists(ruta_destino_ejecutable):
+                    if not messagebox.askyesno("Sobrescribir", f"Ya existe '{nombre_ejecutable}{extension_validada}'. ¿Desea sobrescribirlo?"):
+                        return
+                
+                instalar_paquete(nombre_app_local, extension_validada, ruta_paquete_local, nombre_ejecutable, ruta_destino_ejecutable, verificar_md5_oficial=False, gui_output=output_text)
+            else:
+                instalar_paquete(nombre_app_local, extension_validada, ruta_paquete_local, verificar_md5_oficial=False, gui_output=output_text)
+            
+            messagebox.showinfo("Instalación Local Completada", f"Paquete '{nombre_app_local}' instalado localmente con éxito.")
+
+        except SystemExit:
+            messagebox.showerror("Fallo en Instalación Local", "La instalación local falló. Verifique la salida.")
+        except Exception as e:
+            messagebox.showerror("Error Inesperado", f"Ocurrió un error inesperado: {e}")
+            output_text.insert(tk.END, f"ERROR INESPERADO: {e}\n")
+
+
+    install_button = tk.Button(control_frame, text="Instalar Remoto", command=run_install_from_gui)
+    install_button.pack(side=tk.LEFT, padx=(10, 0))
+
+    uninstall_button = tk.Button(control_frame, text="Desinstalar", command=run_uninstall_from_gui)
+    uninstall_button.pack(side=tk.LEFT, padx=(10, 0))
+
+    upgrade_button = tk.Button(control_frame, text="Actualizar Todo", command=run_upgrade_all_from_gui)
+    upgrade_button.pack(side=tk.LEFT, padx=(10, 0))
+
+    list_button = tk.Button(control_frame, text="Listar Paquetes", command=run_list_installed_from_gui)
+    list_button.pack(side=tk.LEFT, padx=(10, 0))
+
+    local_install_button = tk.Button(control_frame, text="Instalar Local", command=run_local_install_from_gui)
+    local_install_button.pack(side=tk.LEFT, padx=(10, 0))
+
+
+    window.mainloop()
+
+# --- PROGRAMA PRINCIPAL ---
+
+if __name__ == "__main__":
+    # Crear archivos de configuración iniciales si no existen
+    crear_archivos_config_iniciales()
+
+    parser = argparse.ArgumentParser(description="Gestor de paquetes TPT para Nemas OS. ¡Revolucionario!")
+    parser.add_argument('--install', help='Instala una aplicación específica desde los repositorios remotos de Nemas OS.')
+    parser.add_argument('--uninstall', help='Desinstala una aplicación específica instalada por TPT.')
+    parser.add_argument('--upgrade', action='store_true', help='Actualiza todos los paquetes instalados por TPT.')
+    parser.add_argument('--list', action='store_true', help='Muestra la lista de paquetes instalados por TPT.')
+    parser.add_argument('--local', action='store_true', help='Activa el modo de instalación local (pregunta la ruta del paquete).')
+    parser.add_argument('--gui', action='store_true', help='Inicia la interfaz gráfica de TPT.')
+    
+    args = parser.parse_args()
+
+    if args.gui:
+        # La GUI gestionará la elevación de privilegios si es necesario
+        if not es_root():
+            elevar_privilegios_con_pkexec() # Intentar elevar antes de lanzar la GUI
+            # Si pkexec fue exitoso, el script se re-ejecuta y el proceso actual termina.
+            # Si no, mostrar_error_y_salir ya habrá terminado el script.
+            # Por lo tanto, el código de aquí abajo solo se ejecuta si ya somos root.
+        main_gui()
+        sys.exit(0)
+
+    # Para operaciones CLI, verificar/elevar privilegios si no se hizo ya por la GUI
+    if not es_root():
+        elevar_privilegios_con_pkexec()
+
+    verificar_espacio_libre()
+
+    if args.install:
+        instalar_desde_remoto(args.install)
+    elif args.uninstall:
+        tpt_uninstall(args.uninstall)
+    elif args.upgrade:
+        tpt_upgrade_all()
+    elif args.list:
+        tpt_list_installed()
+    elif args.local:
+        extension_elegida = iniciando_interactivo()
+        extension_validada = comprobacion_extension(extension_elegida)
+        ruta_paquete_local = preguntar_ruta_paquete_local()
+
+        nombre_app_local = os.path.splitext(os.path.basename(ruta_paquete_local))[0]
+
+        if extension_validada in [".py", ".sh"]:
+            nombre_ejecutable, ruta_destino_ejecutable = preguntar_nombre_ejecutable(extension_validada)
+            instalar_paquete(nombre_app_local, extension_validada, ruta_paquete_local, nombre_ejecutable, ruta_destino_ejecutable, verificar_md5_oficial=False)
+        else:
+            instalar_paquete(nombre_app_local, extension_validada, ruta_paquete_local, verificar_md5_oficial=False)
+    else:
+        print("\nModo de uso de TPT:")
+        print("  Para instalar desde repositorios remotos: sudo tpt --install <nombre_aplicacion>")
+        print("  Para desinstalar un paquete:             sudo tpt --uninstall <nombre_aplicacion>")
+        print("  Para actualizar todos los paquetes:      sudo tpt --upgrade")
+        print("  Para listar paquetes instalados:         sudo tpt --list")
+        print("  Para instalar un paquete localmente:     sudo tpt --local")
+        print("  Para iniciar la GUI:                     sudo tpt --gui")
+        print("  Para más ayuda:                          tpt --help")
+        print("\nPara el equipo de Nemas OS: ¡Gracias por usar TPT!")
+
