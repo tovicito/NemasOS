@@ -3,7 +3,7 @@ name: Update package.json with root apps
 on:
   push:
     branches:
-      - main
+      - regular
 
 jobs:
   update-package:
