@@ -307,14 +307,46 @@ class InstaladorScript(InstaladorBase):
         if Path(detalles.get('ruta_instalacion', '')).exists(): self._ejecutar_comando(["rm", detalles['ruta_instalacion']], como_root=True)
         if Path(detalles.get('desktop', '')).exists(): self._ejecutar_comando(["rm", detalles['desktop']], como_root=True)
 
-# ... (código de los otros instaladores) ...
+class InstaladorAppImage(InstaladorBase):
+    def instalar(self):
+        dir_destino = self.config.DIR_OPT_ROOT / "AppImages"; self._ejecutar_comando(["mkdir", "-p", str(dir_destino)], como_root=True)
+        ruta_final = dir_destino / f"{self.nombre_app}.AppImage"
+        enlace = self.config.DIR_EJECUTABLES_ROOT / self.nombre_app
+        self._ejecutar_comando(["mv", str(self.ruta_archivo), str(ruta_final)], como_root=True)
+        self._ejecutar_comando(["chmod", "+x", str(ruta_final)], como_root=True)
+        if enlace.exists(): self._ejecutar_comando(["rm", str(enlace)], como_root=True)
+        self._ejecutar_comando(["ln", "-s", str(ruta_final), str(enlace)], como_root=True)
+        ruta_desktop = self._crear_archivo_desktop(enlace)
+        return {"extension": ".AppImage", "ruta_instalacion": str(ruta_final), "enlace": str(enlace), "desktop": ruta_desktop, "instalador": "InstaladorAppImage"}
+    def desinstalar(self, detalles):
+        if Path(detalles.get('ruta_instalacion', '')).exists(): self._ejecutar_comando(["rm", detalles['ruta_instalacion']], como_root=True)
+        if Path(detalles.get('enlace', '')).exists(): self._ejecutar_comando(["rm", detalles['enlace']], como_root=True)
+        if Path(detalles.get('desktop', '')).exists(): self._ejecutar_comando(["rm", detalles['desktop']], como_root=True)
+
+class InstaladorTarGz(InstaladorBase):
+    def instalar(self):
+        dir_extraccion = self.config.DIR_OPT_ROOT / self.nombre_app
+        self._ejecutar_comando(["rm", "-rf", str(dir_extraccion)], como_root=True)
+        self._ejecutar_comando(["mkdir", "-p", str(dir_extraccion)], como_root=True)
+        self._ejecutar_comando(["tar", "-xzf", str(self.ruta_archivo), "-C", str(dir_extraccion), "--strip-components=1"], como_root=True)
+        ejecutable = next((p for p in dir_extraccion.rglob('*') if p.is_file() and os.access(p, os.X_OK)), dir_extraccion / self.nombre_app)
+        ruta_desktop = self._crear_archivo_desktop(ejecutable) if ejecutable.exists() else None
+        return {"extension": ".tar.gz", "ruta_instalacion": str(dir_extraccion), "desktop": ruta_desktop, "instalador": "InstaladorTarGz"}
+    def desinstalar(self, detalles):
+        if Path(detalles.get('ruta_instalacion', '')).exists(): self._ejecutar_comando(["rm", "-rf", detalles['ruta_instalacion']], como_root=True)
+        if Path(detalles.get('desktop', '')).exists(): self._ejecutar_comando(["rm", detalles['desktop']], como_root=True)
+
+def obtener_clase_instalador(extension):
+    return {
+        ".deb": InstaladorDeb, ".sh": InstaladorScript, ".py": InstaladorScript,
+        ".AppImage": InstaladorAppImage, ".tar.gz": InstaladorTarGz, ".nemas_pkg": InstaladorTarGz,
+    }.get(extension)
 
 # =============================================================================
 # SECCIÓN 4: INTERFACES DE USUARIO
 # =============================================================================
 
 class InterfazCLI:
-    """Gestiona toda la interacción por línea de comandos."""
     def __init__(self, gestor_paquetes):
         self.gestor = gestor_paquetes
 
@@ -323,7 +355,6 @@ class InterfazCLI:
         subparsers = parser.add_subparsers(dest="comando", help="Comandos disponibles")
         try: subparsers.required = True
         except AttributeError: pass
-
         p_buscar = subparsers.add_parser("buscar", help="Buscar un paquete.")
         p_buscar.add_argument("termino_busqueda", help="El nombre del paquete a buscar.")
         p_instalar = subparsers.add_parser("instalar", help="Instalar un paquete.")
@@ -335,20 +366,16 @@ class InterfazCLI:
         p_actualizar.add_argument("nombre_paquete", nargs='?', default=None, help="Paquete específico a actualizar, o todos si se omite.")
         subparsers.add_parser("reparar", help="Intentar reparar dependencias rotas del sistema.")
         subparsers.add_parser("gui", help="Lanzar la interfaz gráfica de usuario.")
-
         args = parser.parse_args()
 
         if args.comando == "buscar": self.gestor.buscar(args.termino_busqueda)
         elif args.comando == "instalar": self.gestor.instalar(args.nombre_paquete)
         elif args.comando == "desinstalar": self.gestor.desinstalar(args.nombre_paquete)
         elif args.comando == "listar": self.gestor.listar_instalados()
-        elif args.comando == "actualizar": self.gestor.actualizar(args.nombre_paquete)
         elif args.comando == "reparar": self.gestor.reparar()
         elif args.comando == "gui":
-            if not HAS_GTK: raise ErrorCriticoTPT("El modo GUI requiere PyGObject, pero no está instalado.")
+            if not HAS_GTK: raise ErrorCriticoTPT("El modo GUI requiere PyGObject.")
             InterfazGUI(self.gestor).run()
-
-# ... (código de InterfazGUI sin cambios) ...
 
 # =============================================================================
 # SECCIÓN 5: EJECUCIÓN PRINCIPAL
