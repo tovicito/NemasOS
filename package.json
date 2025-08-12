@@ -1,9 +1,0 @@
-{
-  "name": "root-apps",
-  "version": "1.0.0",
-  "description": "A list of apps in the root directory.",
-  "private": true,
-  "apps": [
-    "OOBE.py"
-  ]
-}
