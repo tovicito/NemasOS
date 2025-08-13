@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Base64 Utility
+Type=Application
+Exec=/usr/bin/nemas-base64
+Icon=format-text-direction

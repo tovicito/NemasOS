@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Markdown Previewer
+Type=Application
+Exec=/usr/bin/nemas-markdown-previewer
+Icon=text-markdown

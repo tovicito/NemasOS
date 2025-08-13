@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Calculator
+Type=Application
+Exec=/usr/bin/nemas-calculadora
+Icon=accessories-calculator

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Backup
+Type=Application
+Exec=/usr/bin/nemas-backup
+Icon=document-save

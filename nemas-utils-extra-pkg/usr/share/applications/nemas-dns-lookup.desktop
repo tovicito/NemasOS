@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=DNS Lookup
+Type=Application
+Exec=/usr/bin/nemas-dns-lookup
+Icon=network-wired

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=URL Codec
+Type=Application
+Exec=/usr/bin/nemas-url-codec
+Icon=network-wireless

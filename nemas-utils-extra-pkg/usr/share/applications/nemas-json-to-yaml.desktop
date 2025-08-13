@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=JSON to YAML
+Type=Application
+Exec=/usr/bin/nemas-json-to-yaml "JSON to YAML"
+Icon=applications-utilities

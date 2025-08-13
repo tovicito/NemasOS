@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Line Counter
+Type=Application
+Exec=/usr/bin/nemas-contador-lineas
+Icon=accessories-character-map

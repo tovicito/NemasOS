@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Simple Calendar
+Type=Application
+Exec=/usr/bin/nemas-simple-calendar "Simple Calendar"
+Icon=applications-utilities

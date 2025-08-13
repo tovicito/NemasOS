@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Weekly Planner
+Type=Application
+Exec=/usr/bin/nemas-weekly-planner "Weekly Planner"
+Icon=applications-utilities

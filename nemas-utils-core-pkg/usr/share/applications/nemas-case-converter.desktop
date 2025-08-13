@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Case Converter
+Type=Application
+Exec=/usr/bin/nemas-case-converter
+Icon=format-text-capitalize

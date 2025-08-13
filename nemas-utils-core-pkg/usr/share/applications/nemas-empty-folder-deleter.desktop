@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Empty Folder Deleter
+Type=Application
+Exec=/usr/bin/nemas-empty-folder-deleter
+Icon=user-trash

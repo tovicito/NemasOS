@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Lorem Ipsum Generator
+Type=Application
+Exec=/usr/bin/nemas-lorem-ipsum
+Icon=text-x-generic

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Ping Tool
+Type=Application
+Exec=/usr/bin/nemas-ping-tool
+Icon=network-wired

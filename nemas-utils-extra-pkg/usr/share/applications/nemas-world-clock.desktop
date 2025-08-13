@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=World Clock
+Type=Application
+Exec=/usr/bin/nemas-world-clock "World Clock"
+Icon=applications-utilities

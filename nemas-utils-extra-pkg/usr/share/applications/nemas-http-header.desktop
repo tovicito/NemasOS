@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=HTTP Header Viewer
+Type=Application
+Exec=/usr/bin/nemas-http-header
+Icon=network-wired

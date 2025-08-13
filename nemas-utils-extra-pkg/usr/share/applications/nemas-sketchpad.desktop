@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Sketchpad
+Type=Application
+Exec=/usr/bin/nemas-sketchpad "Sketchpad"
+Icon=applications-utilities

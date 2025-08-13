@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=EXIF Viewer
+Type=Application
+Exec=/usr/bin/nemas-exif-viewer
+Icon=applications-graphics

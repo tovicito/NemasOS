@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Diff Checker
+Type=Application
+Exec=/usr/bin/nemas-diff-checker
+Icon=document-properties

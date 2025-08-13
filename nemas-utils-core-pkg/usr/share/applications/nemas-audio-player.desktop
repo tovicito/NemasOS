@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Audio Player
+Type=Application
+Exec=/usr/bin/nemas-audio-player
+Icon=multimedia-audio-player

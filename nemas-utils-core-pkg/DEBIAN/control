@@ -1,0 +1,8 @@
+Package: nemas-utils-core
+Version: 1.0.0
+Architecture: all
+Maintainer: Jules <jules@agent.dev>
+Depends: python3, python3-pyqt5, python3-markdown, python3-pyqt5.qtwebengine, python3-pil, python3-pypdf2, python3-whois, python3-qrcode
+Description: Core collection of 39 GUI utilities for Nemás OS.
+ This package provides a suite of essential, everyday tools.
+ Part 1 of 2.

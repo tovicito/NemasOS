@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=PDF Merger
+Type=Application
+Exec=/usr/bin/nemas-pdf-merger
+Icon=application-pdf

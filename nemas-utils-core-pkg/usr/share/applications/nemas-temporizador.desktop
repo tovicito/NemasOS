@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Timer
+Type=Application
+Exec=/usr/bin/nemas-temporizador
+Icon=accessories-clock

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Text Editor
+Type=Application
+Exec=/usr/bin/nemas-editor-texto
+Icon=accessories-text-editor

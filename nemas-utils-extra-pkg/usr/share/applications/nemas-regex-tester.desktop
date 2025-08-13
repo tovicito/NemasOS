@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Regex Tester
+Type=Application
+Exec=/usr/bin/nemas-regex-tester "Regex Tester"
+Icon=applications-utilities

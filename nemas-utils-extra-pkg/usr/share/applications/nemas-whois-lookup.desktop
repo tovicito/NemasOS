@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=WHOIS Lookup
+Type=Application
+Exec=/usr/bin/nemas-whois-lookup
+Icon=network-wired

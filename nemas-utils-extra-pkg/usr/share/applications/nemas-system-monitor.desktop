@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=System Monitor
+Type=Application
+Exec=/usr/bin/nemas-system-monitor "System Monitor"
+Icon=applications-utilities

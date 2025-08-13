@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=System Cleaner
+Type=Application
+Exec=/usr/bin/nemas-limpiador
+Icon=user-trash

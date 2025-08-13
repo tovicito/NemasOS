@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Image Viewer
+Type=Application
+Exec=/usr/bin/nemas-visor-imagenes
+Icon=multimedia-photo-viewer

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Stopwatch
+Type=Application
+Exec=/usr/bin/nemas-stopwatch
+Icon=accessories-clock

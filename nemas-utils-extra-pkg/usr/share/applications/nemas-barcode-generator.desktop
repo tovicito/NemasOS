@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Barcode Generator
+Type=Application
+Exec=/usr/bin/nemas-barcode-generator "Barcode Generator"
+Icon=applications-utilities

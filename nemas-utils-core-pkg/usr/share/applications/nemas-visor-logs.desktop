@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Log Viewer
+Type=Application
+Exec=/usr/bin/nemas-visor-logs
+Icon=text-x-generic

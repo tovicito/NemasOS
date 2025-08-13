@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Unit Converter
+Type=Application
+Exec=/usr/bin/nemas-unit-converter "Unit Converter"
+Icon=applications-utilities

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=QR Code Generator
+Type=Application
+Exec=/usr/bin/nemas-qr-generator
+Icon=applications-graphics

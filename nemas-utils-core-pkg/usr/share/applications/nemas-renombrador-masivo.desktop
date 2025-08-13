@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Bulk Renamer
+Type=Application
+Exec=/usr/bin/nemas-renombrador-masivo
+Icon=document-properties

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=File Encryptor
+Type=Application
+Exec=/usr/bin/nemas-file-encryptor
+Icon=utilities-password

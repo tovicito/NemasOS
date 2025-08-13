@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Find and Replace
+Type=Application
+Exec=/usr/bin/nemas-buscar-reemplazar
+Icon=edit-find-replace

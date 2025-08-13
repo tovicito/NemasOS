@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Cron Job Editor
+Type=Application
+Exec=/usr/bin/nemas-cron-editor "Cron Job Editor"
+Icon=applications-utilities

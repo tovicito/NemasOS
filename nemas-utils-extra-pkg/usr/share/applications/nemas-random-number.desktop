@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Random Number
+Type=Application
+Exec=/usr/bin/nemas-random-number "Random Number"
+Icon=applications-utilities

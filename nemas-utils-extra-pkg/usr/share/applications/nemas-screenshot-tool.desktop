@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Screenshot Tool
+Type=Application
+Exec=/usr/bin/nemas-screenshot-tool "Screenshot Tool"
+Icon=applications-utilities

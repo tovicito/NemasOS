@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Weather Applet
+Type=Application
+Exec=/usr/bin/nemas-weather-applet "Weather Applet"
+Icon=applications-utilities

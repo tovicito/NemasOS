@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Digital Clock
+Type=Application
+Exec=/usr/bin/nemas-digital-clock "Digital Clock"
+Icon=applications-utilities

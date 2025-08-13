@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Process Viewer
+Type=Application
+Exec=/usr/bin/nemas-process-viewer "Process Viewer"
+Icon=applications-utilities

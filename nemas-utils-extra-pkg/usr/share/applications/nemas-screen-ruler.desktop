@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Screen Ruler
+Type=Application
+Exec=/usr/bin/nemas-screen-ruler "Screen Ruler"
+Icon=applications-utilities

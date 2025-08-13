@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Speed Test
+Type=Application
+Exec=/usr/bin/nemas-test-velocidad
+Icon=network-wired

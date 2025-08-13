@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Snippet Manager
+Type=Application
+Exec=/usr/bin/nemas-snippet-manager "Snippet Manager"
+Icon=applications-utilities

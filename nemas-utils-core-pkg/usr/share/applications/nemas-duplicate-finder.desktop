@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Duplicate Finder
+Type=Application
+Exec=/usr/bin/nemas-duplicate-finder
+Icon=system-search

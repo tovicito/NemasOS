@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Video Player
+Type=Application
+Exec=/usr/bin/nemas-video-player
+Icon=multimedia-video-player

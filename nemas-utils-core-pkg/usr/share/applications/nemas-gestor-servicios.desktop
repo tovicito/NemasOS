@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Service Manager
+Type=Application
+Exec=/usr/bin/nemas-gestor-servicios
+Icon=preferences-system-services

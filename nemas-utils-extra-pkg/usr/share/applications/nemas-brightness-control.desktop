@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Brightness Control
+Type=Application
+Exec=/usr/bin/nemas-brightness-control "Brightness Control"
+Icon=applications-utilities

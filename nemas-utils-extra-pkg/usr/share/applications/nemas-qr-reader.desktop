@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=QR Reader
+Type=Application
+Exec=/usr/bin/nemas-qr-reader "QR Reader"
+Icon=applications-utilities

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Clipboard Manager
+Type=Application
+Exec=/usr/bin/nemas-gestor-portapapeles
+Icon=edit-paste

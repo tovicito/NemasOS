@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Font Viewer
+Type=Application
+Exec=/usr/bin/nemas-font-viewer "Font Viewer"
+Icon=applications-utilities

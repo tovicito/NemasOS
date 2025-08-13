@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Batch Image Resizer
+Type=Application
+Exec=/usr/bin/nemas-batch-resizer
+Icon=applications-graphics

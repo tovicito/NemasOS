@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=IP Viewer
+Type=Application
+Exec=/usr/bin/nemas-ip-viewer
+Icon=network-wired

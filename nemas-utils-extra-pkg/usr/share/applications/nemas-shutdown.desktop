@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Shutdown
+Type=Application
+Exec=/usr/bin/nemas-shutdown "Shutdown"
+Icon=applications-utilities

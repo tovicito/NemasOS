@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=File Checksum
+Type=Application
+Exec=/usr/bin/nemas-file-checksum
+Icon=applications-utilities

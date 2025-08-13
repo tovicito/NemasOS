@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Todo List
+Type=Application
+Exec=/usr/bin/nemas-todo-list "Todo List"
+Icon=applications-utilities
