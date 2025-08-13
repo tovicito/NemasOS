@@ -38,7 +38,7 @@ class Configuracion:
 
         self.REPOS_POR_DEFECTO = [
             "https://raw.githubusercontent.com/tovicito/NemasOS/regular/",
-            "https://raw.githubusercontent.com/NemasOS-Community/Nemas-Packages/main/"
+            "https://raw.githubusercontent.com/tovicito/Nemas-community/main/"
         ]
 
     def asegurar_directorios(self):
