@@ -6,7 +6,7 @@ import shlex
 from datetime import datetime, timezone
 
 # --- Configuration ---
-OUTPUT_FILENAME = "index.json"
+OUTPUT_FILENAME = "packages.json"
 IGNORE_LIST = {
     'LICENSE',
     'README.md',
