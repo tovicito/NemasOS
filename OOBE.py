@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import gi #Ahh
+import gi
 import threading
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Gdk
