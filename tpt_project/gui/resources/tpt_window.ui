@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="adw" version="1"/>
+  <template class="MainWindow" parent="AdwApplicationWindow">
+    <property name="title">TPT - La Herramienta de Paquetes Total</property>
+    <property name="default-width">1200</property>
+    <property name="default-height">800</property>
+    <property name="content">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title">TPT</property>
+                <property name="subtitle">La Herramienta de Paquetes Total</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="main_content_box">
+            <property name="orientation">vertical</property>
+            <property name="vexpand">true</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkSearchEntry" id="search_entry">
+                <property name="placeholder-text">Buscar paquetes...</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkPaned">
+                <property name="orientation">horizontal</property>
+                <property name="vexpand">true</property>
+                <property name="wide-handle">true</property>
+
+                <property name="start-child">
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <child>
+                      <object class="GtkListView" id="results_list_view">
+                        <property name="model">
+                          <object class="GtkStringList" id="results_model" />
+                        </property>
+                        <property name="factory">
+                          <object class="GtkSignalListItemFactory">
+                            <signal name="setup" handler="_on_list_item_setup"/>
+                            <signal name="bind" handler="_on_list_item_bind"/>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+
+                <property name="end-child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="margin-start">12</property>
+                    <property name="margin-end">12</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"></attribute>
+                        </attributes>
+                        <property name="label">Detalles del Paquete</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTextView" id="details_view">
+                        <property name="editable">false</property>
+                        <property name="wrap-mode">word</property>
+                        <property name="vexpand">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="install_button">
+                        <property name="label">Instalar</property>
+                        <property name="halign">fill</property>
+                        <property name="sensitive">false</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="height-request">200</property>
+                <property name="vexpand">false</property>
+                <child>
+                  <object class="GtkTextView" id="log_view">
+                    <property name="editable">false</property>
+                    <property name="cursor-visible">false</property>
+                    <property name="monospace">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
