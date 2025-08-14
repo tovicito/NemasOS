@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Base64 Utility
+Exec=/usr/bin/nemas-base64
+Type=Application

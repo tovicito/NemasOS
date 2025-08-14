@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Color Picker
+Exec=/usr/bin/nemas-color-picker
+Type=Application

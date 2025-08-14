@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=String Escaper
+Exec=/usr/bin/nemas-string-escaper
+Type=Application

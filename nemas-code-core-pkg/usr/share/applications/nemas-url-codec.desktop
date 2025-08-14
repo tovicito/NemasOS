@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=URL Codec
+Exec=/usr/bin/nemas-url-codec
+Type=Application

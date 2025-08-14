@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Port Scanner
+Exec=/usr/bin/nemas-port-scanner
+Type=Application

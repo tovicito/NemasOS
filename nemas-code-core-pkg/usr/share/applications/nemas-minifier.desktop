@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=JS/CSS Minifier
+Exec=/usr/bin/nemas-minifier
+Type=Application

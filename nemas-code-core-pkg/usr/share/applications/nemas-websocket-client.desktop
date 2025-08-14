@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=WebSocket Client
+Exec=/usr/bin/nemas-websocket-client
+Type=Application

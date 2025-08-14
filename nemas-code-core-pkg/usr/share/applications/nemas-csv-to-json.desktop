@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=CSV to JSON
+Exec=/usr/bin/nemas-csv-to-json
+Type=Application

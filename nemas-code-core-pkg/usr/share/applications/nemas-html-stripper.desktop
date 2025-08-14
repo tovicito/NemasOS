@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=HTML Stripper
+Exec=/usr/bin/nemas-html-stripper
+Type=Application

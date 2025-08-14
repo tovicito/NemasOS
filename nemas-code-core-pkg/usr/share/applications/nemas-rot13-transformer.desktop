@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=ROT13 Transformer
+Exec=/usr/bin/nemas-rot13-transformer
+Type=Application

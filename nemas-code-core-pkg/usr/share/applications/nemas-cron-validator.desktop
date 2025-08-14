@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=CRON Validator
+Exec=/usr/bin/nemas-cron-validator
+Type=Application

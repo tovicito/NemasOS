@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Character Counter
+Exec=/usr/bin/nemas-contador-caracteres
+Type=Application

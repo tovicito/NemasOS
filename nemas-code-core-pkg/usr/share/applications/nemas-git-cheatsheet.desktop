@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Git Cheatsheet
+Exec=/usr/bin/nemas-git-cheatsheet
+Type=Application

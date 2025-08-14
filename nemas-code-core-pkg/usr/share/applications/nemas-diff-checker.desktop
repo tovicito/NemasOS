@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Diff Checker
+Exec=/usr/bin/nemas-diff-checker
+Type=Application

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Slugify
+Exec=/usr/bin/nemas-slugify
+Type=Application

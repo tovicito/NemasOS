@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Hex Viewer
+Exec=/usr/bin/nemas-hex-viewer
+Type=Application

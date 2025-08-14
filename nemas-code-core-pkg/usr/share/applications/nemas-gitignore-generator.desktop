@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=.gitignore Generator
+Exec=/usr/bin/nemas-gitignore-generator
+Type=Application

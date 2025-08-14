@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Chmod Calculator
+Exec=/usr/bin/nemas-chmod-calculator
+Type=Application

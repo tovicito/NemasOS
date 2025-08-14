@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Regex Tester
+Exec=/usr/bin/nemas-regex-tester
+Type=Application

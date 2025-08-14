@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=SQLite Runner
+Exec=/usr/bin/nemas-sqlite-runner
+Type=Application

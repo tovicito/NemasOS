@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Ping Tool
+Exec=/usr/bin/nemas-ping-tool
+Type=Application

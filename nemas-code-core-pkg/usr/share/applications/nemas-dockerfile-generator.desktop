@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Dockerfile Generator
+Exec=/usr/bin/nemas-dockerfile-generator
+Type=Application

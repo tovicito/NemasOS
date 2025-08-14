@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=API Client
+Exec=/usr/bin/nemas-api-client
+Type=Application

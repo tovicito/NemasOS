@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Bip39 Mnemonic
+Exec=/usr/bin/nemas-bip39-generator
+Type=Application

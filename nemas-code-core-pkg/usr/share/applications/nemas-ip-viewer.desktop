@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=IP Viewer
+Exec=/usr/bin/nemas-ip-viewer
+Type=Application

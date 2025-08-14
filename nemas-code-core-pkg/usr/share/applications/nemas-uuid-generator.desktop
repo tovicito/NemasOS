@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=UUID Generator
+Exec=/usr/bin/nemas-uuid-generator
+Type=Application

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Checksum Calculator
+Exec=/usr/bin/nemas-checksum
+Type=Application

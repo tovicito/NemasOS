@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Case Converter
+Exec=/usr/bin/nemas-case-converter
+Type=Application

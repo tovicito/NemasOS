@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=JSON Formatter
+Exec=/usr/bin/nemas-json-formatter
+Type=Application

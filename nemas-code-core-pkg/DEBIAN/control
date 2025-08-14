@@ -1,0 +1,8 @@
+Package: nemas-code-core
+Version: 1.0.0
+Architecture: all
+Maintainer: Jules <jules@agent.dev>
+Depends: python3, python3-pyqt5, python3-requests, python3-yaml, python3-pygments, python3-whois, python3-qrcode, python3-pil
+Description: Core collection of 39 developer utilities for Nemás OS.
+ This package provides essential tools for programming and data manipulation.
+ Part 1 of 2.

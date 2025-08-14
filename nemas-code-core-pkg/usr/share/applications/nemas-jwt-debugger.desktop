@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=JWT Debugger
+Exec=/usr/bin/nemas-jwt-debugger
+Type=Application

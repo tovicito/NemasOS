@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Simple File Server
+Exec=/usr/bin/nemas-simple-fileserver
+Type=Application

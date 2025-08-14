@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=HTML Entity Codec
+Exec=/usr/bin/nemas-html-entity-codec
+Type=Application

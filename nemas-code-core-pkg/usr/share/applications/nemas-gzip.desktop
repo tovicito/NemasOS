@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Gzip/Gunzip
+Exec=/usr/bin/nemas-gzip
+Type=Application

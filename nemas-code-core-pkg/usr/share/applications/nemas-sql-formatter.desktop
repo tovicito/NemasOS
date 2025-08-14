@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=SQL Formatter
+Exec=/usr/bin/nemas-sql-formatter
+Type=Application
