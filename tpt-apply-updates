@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+TPT Apply Updates - El trabajador silencioso de AADPO.
+Este script es llamado por el sistema (ej. systemd) para aplicar actualizaciones preparadas.
+"""
+
+import sys
+import json
+from pathlib import Path
+import shutil
+
+# Añadir el directorio del proyecto al path de Python para poder importar los módulos
+project_dir = Path(__file__).parent / 'tpt_project'
+sys.path.insert(0, str(project_dir.parent))
+
+from tpt_project.core.config import Configuracion
+from tpt_project.utils.logger import setup_logger
+from tpt_project.core.package_manager import PackageManager
+from tpt_project.utils.exceptions import TPTError
+
+def main():
+    """Punto de entrada del aplicador de actualizaciones."""
+
+    config = Configuracion()
+    # Asegurarse de que los directorios existen, pero sin salida a stdout/stderr
+    try:
+        config.asegurar_directorios()
+    except Exception:
+        # Si falla aquí, no podemos ni registrarlo. Salimos.
+        sys.exit(1)
+
+    logger = setup_logger(config)
+    logger.info("AADPO: Iniciando el script tpt-apply-updates.")
+
+    manifest_path = config.DIR_STAGING / "aadpo_manifest.json"
+    if not manifest_path.exists():
+        logger.info("AADPO: No se encontró manifiesto de actualizaciones. No hay nada que hacer.")
+        sys.exit(0)
+
+    try:
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+        actions = manifest.get("actions", [])
+        if not actions:
+            logger.info("AADPO: El manifiesto está vacío. No hay nada que hacer.")
+            cleanup(config, logger)
+            sys.exit(0)
+
+        logger.info(f"AADPO: Se encontraron {len(actions)} acciones para aplicar.")
+
+        pm = PackageManager(config, logger)
+
+        # Primero, actualizamos las fuentes del sistema si es necesario
+        if any(a.get("manager") == "apt" for a in actions if a.get("action") == "sys_update"):
+            pm._apply_system_updates_sources()
+
+        # Aplicar todas las acciones
+        for i, action in enumerate(actions):
+            logger.info(f"AADPO: Ejecutando acción {i+1}/{len(actions)} -> {action}")
+            try:
+                if action.get("action") == "install_tpt":
+                    pm.install_from_staged_file(action["name"], action.get("file"))
+
+                elif action.get("action") == "sys_update":
+                    # Creamos un dict para el gestor específico
+                    update_dict = {action["manager"]: True}
+                    pm._apply_system_package_updates(update_dict)
+
+                else:
+                    logger.warning(f"AADPO: Acción desconocida '{action.get('action')}'. Omitiendo.")
+
+            except Exception as e:
+                logger.error(f"AADPO: Falló la acción {action}. Error: {e}", exc_info=True)
+                # No detenemos el proceso, intentamos aplicar las demás.
+
+        logger.success("AADPO: Proceso de aplicación de actualizaciones completado.")
+
+    except Exception as e:
+        logger.critical(f"AADPO: Ocurrió un error crítico durante el proceso. Error: {e}", exc_info=True)
+    finally:
+        # Limpiar la zona de espera después de la ejecución
+        cleanup(config, logger)
+
+def cleanup(config: Configuracion, logger: Logger):
+    """Limpia el directorio de staging."""
+    logger.info("AADPO: Limpiando la zona de espera...")
+    try:
+        if config.DIR_STAGING.exists():
+            shutil.rmtree(config.DIR_STAGING)
+            # Volver a crear el directorio vacío para la próxima vez
+            config.DIR_STAGING.mkdir(parents=True, exist_ok=True)
+        logger.info("AADPO: Limpieza completada.")
+    except Exception as e:
+        logger.error(f"AADPO: Falló la limpieza de la zona de espera. Error: {e}", exc_info=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,794 @@
+# Italian translations for PACKAGE package.
+# Copyright (C) 2025 ORGANIZATION
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2025-08-15 19:02+0000\n"
+"PO-Revision-Date: 2025-08-15 19:02+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: tpt_project/cli.py:32
+msgid "Forzar un idioma (ej. es, en)"
+msgstr ""
+
+#: tpt_project/cli.py:44
+msgid ""
+"\n"
+"Operación cancelada por el usuario."
+msgstr ""
+
+#: tpt_project/cli.py:47
+msgid "Ocurrió un error inesperado: {}"
+msgstr ""
+
+#: tpt_project/cli.py:56
+msgid "TPT - La Herramienta de Paquetes Total"
+msgstr ""
+
+#: tpt_project/cli.py:59
+msgid "Comandos disponibles"
+msgstr ""
+
+#: tpt_project/cli.py:62
+msgid "Buscar un paquete en los repositorios."
+msgstr ""
+
+#: tpt_project/cli.py:63
+msgid "Término de búsqueda."
+msgstr ""
+
+#: tpt_project/cli.py:67
+msgid "Instalar uno o más paquetes."
+msgstr ""
+
+#: tpt_project/cli.py:68
+msgid "Nombre(s) del(los) paquete(s) a instalar."
+msgstr ""
+
+#: tpt_project/cli.py:72
+msgid "Desinstalar uno o más paquetes."
+msgstr ""
+
+#: tpt_project/cli.py:73
+msgid "Nombre(s) del(los) paquete(s) a desinstalar."
+msgstr ""
+
+#: tpt_project/cli.py:77
+msgid "Listar todos los paquetes instalados por TPT."
+msgstr ""
+
+#: tpt_project/cli.py:81
+msgid "Actualizar el sistema y los paquetes de TPT."
+msgstr ""
+
+#: tpt_project/cli.py:82
+msgid "Descarga las actualizaciones pero no las instala (para AADPO)."
+msgstr ""
+
+#: tpt_project/cli.py:86
+msgid "Lanzar la Interfaz Gráfica de Usuario."
+msgstr ""
+
+#: tpt_project/cli.py:90
+msgid "Integra TPT con el sistema (ej. para AADPO)."
+msgstr ""
+
+#: tpt_project/cli.py:91
+msgid "Acciones de integración"
+msgstr ""
+
+#: tpt_project/cli.py:92
+msgid "Instala el servicio AADPO de systemd."
+msgstr ""
+
+#: tpt_project/cli.py:94
+msgid "Desinstala el servicio AADPO de systemd."
+msgstr ""
+
+#: tpt_project/cli.py:98
+msgid "Muestra las actualizaciones pendientes de AADPO."
+msgstr ""
+
+#: tpt_project/cli.py:105
+msgid "Buscando '{}'..."
+msgstr ""
+
+#: tpt_project/cli.py:109
+msgid "No se encontraron paquetes para '{}'."
+msgstr ""
+
+#: tpt_project/cli.py:112
+msgid "Resultados para '[bold cyan]{}[/bold cyan]'"
+msgstr ""
+
+#: tpt_project/cli.py:113 tpt_project/gui/main_window.py:77
+msgid "Fuente"
+msgstr ""
+
+#: tpt_project/cli.py:114 tpt_project/cli.py:175
+msgid "Nombre"
+msgstr ""
+
+#: tpt_project/cli.py:115 tpt_project/cli.py:176
+msgid "Versión"
+msgstr ""
+
+#: tpt_project/cli.py:116
+msgid "Descripción"
+msgstr ""
+
+#: tpt_project/cli.py:131
+msgid "Procesando instalación para: [bold magenta]{}[/bold magenta]"
+msgstr ""
+
+#: tpt_project/cli.py:140
+msgid "Por favor, elige una fuente de instalación"
+msgstr ""
+
+#: tpt_project/cli.py:144
+msgid ""
+"Intentando instalar '{}' desde la fuente seleccionada: [bold blue]{}[/bold "
+"blue]"
+msgstr ""
+
+#: tpt_project/cli.py:147
+msgid "No se pudo instalar '{}': {}"
+msgstr ""
+
+#: tpt_project/cli.py:149
+msgid "Ocurrió un error inesperado al procesar '{}': {}"
+msgstr ""
+
+#: tpt_project/cli.py:151
+msgid "¿Deseas proceder con la instalación de '{}'?"
+msgstr ""
+
+#: tpt_project/cli.py:154
+msgid "Instalación de '{}' cancelada por el usuario."
+msgstr ""
+
+#: tpt_project/cli.py:158
+msgid "Se intentará desinstalar: [bold red]{}[/bold red]"
+msgstr ""
+
+#: tpt_project/cli.py:159
+msgid "¿Estás seguro de que quieres desinstalar estos paquetes?"
+msgstr ""
+
+#: tpt_project/cli.py:160
+msgid "Desinstalación cancelada."
+msgstr ""
+
+#: tpt_project/cli.py:171
+msgid "No hay paquetes instalados a través de TPT."
+msgstr ""
+
+#: tpt_project/cli.py:174
+msgid "Paquetes Instalados por TPT"
+msgstr ""
+
+#: tpt_project/cli.py:177
+msgid "Manejador"
+msgstr ""
+
+#: tpt_project/cli.py:180
+msgid "Desconocido"
+msgstr ""
+
+#: tpt_project/cli.py:188
+msgid "Modo AADPO: Descargando actualizaciones sin aplicar..."
+msgstr ""
+
+#: tpt_project/cli.py:191
+msgid "Iniciando proceso de actualización completo..."
+msgstr ""
+
+#: tpt_project/cli.py:192
+msgid ""
+"Esto buscará y aplicará actualizaciones del sistema y de los paquetes TPT. "
+"¿Continuar?"
+msgstr ""
+
+#: tpt_project/cli.py:195
+msgid "Proceso de actualización cancelado."
+msgstr ""
+
+#: tpt_project/cli.py:198
+msgid "Lanzando la Interfaz Gráfica de Usuario GTK4..."
+msgstr ""
+
+#: tpt_project/cli.py:203
+msgid "No se pudo lanzar la GUI: {}"
+msgstr ""
+
+#: tpt_project/cli.py:204
+msgid "Asegúrate de que tienes las dependencias de GTK4 instaladas."
+msgstr ""
+
+#: tpt_project/cli.py:205
+msgid ""
+"En Debian/Ubuntu: sudo apt install python3-gi python3-gi-cairo gir1.2-"
+"gtk-4.0 gir1.2-adw-1"
+msgstr ""
+
+#: tpt_project/cli.py:206
+msgid "O con pip: pip install PyGObject"
+msgstr ""
+
+#: tpt_project/cli.py:211
+msgid "Instalando servicio AADPO de systemd..."
+msgstr ""
+
+#: tpt_project/cli.py:212
+msgid "Esto instalará un servicio en /etc/systemd/system. ¿Continuar?"
+msgstr ""
+
+#: tpt_project/cli.py:213
+msgid "Instalación del servicio cancelada."
+msgstr ""
+
+#: tpt_project/cli.py:219
+msgid "Desinstalando servicio AADPO de systemd..."
+msgstr ""
+
+#: tpt_project/cli.py:224
+msgid "Comprobando el estado de AADPO..."
+msgstr ""
+
+#: tpt_project/cli.py:228
+msgid "No hay actualizaciones pendientes de AADPO."
+msgstr ""
+
+#: tpt_project/cli.py:232
+msgid "Se encontró un manifiesto de AADPO, pero está vacío o corrupto."
+msgstr ""
+
+#: tpt_project/cli.py:235
+msgid "Actualizaciones Pendientes de AADPO"
+msgstr ""
+
+#: tpt_project/cli.py:236
+msgid "Tipo de Acción"
+msgstr ""
+
+#: tpt_project/cli.py:237
+msgid "Detalles"
+msgstr ""
+
+#: tpt_project/cli.py:240
+msgid "Desconocida"
+msgstr ""
+
+#: tpt_project/cli.py:243
+msgid "Paquete: {}, Archivo: {}"
+msgstr ""
+
+#: tpt_project/cli.py:245
+msgid "Gestor: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:76
+msgid ""
+"No se puede determinar el formato: el paquete no tiene 'format' ni "
+"'download_url'."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:79
+msgid ""
+"No se pudo determinar el formato del paquete desde la URL o los metadatos."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:83
+msgid "El formato de paquete '{}' no es compatible."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:85
+msgid "Usando manejador: [bold yellow]{}[/bold yellow]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:94
+msgid ""
+"No se pudo leer la base de datos de paquetes. Creando una nueva. Error: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:102
+msgid "No se pudo escribir en la base de datos de paquetes: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:105
+msgid "Verificando suma de comprobación (checksum)..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:113
+msgid "Suma de comprobación verificada correctamente."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:115
+msgid ""
+"¡Suma de comprobación no coincide! Esperado: {}, Calculado: {}. El archivo "
+"puede estar corrupto o manipulado."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:117
+msgid "No se pudo leer el archivo para verificar el checksum: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:121
+msgid ""
+"Archivo de repositorios no encontrado. Creando uno con los valores por "
+"defecto."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:133
+msgid "Buscando manifiesto en {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:140
+msgid "No se pudo obtener el manifiesto de {}: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:142
+msgid "Usando manifiesto cacheado para {}."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:147
+msgid "Buscando en repositorios TPT..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:155
+#: tpt_project/core/package_manager.py:167
+msgid "Sin descripción"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:157
+msgid "Búsqueda en TPT finalizada."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:161
+msgid "Buscando en APT..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:169
+msgid "Fallo al buscar en APT: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:173
+msgid "Buscando en Flatpak..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:182
+msgid "Fallo al buscar en Flatpak: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:186
+msgid "Buscando en Snap Store..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:195
+msgid "Fallo al buscar en Snap: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:198
+msgid "Iniciando búsqueda universal para '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:207
+msgid "Búsqueda universal completada. Se encontraron {} resultados en total."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:218
+msgid "Buscando por convención para '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:239
+msgid "Intentando URL por convención: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:241
+msgid "¡URL válida encontrada por convención! {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:242
+msgid "Paquete instalado por convención. Metadatos no disponibles."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:246
+msgid ""
+"Resolviendo paquete para instalación: [bold magenta]{}[/bold magenta]..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:252
+msgid ""
+"No se encontró '{}' en manifiestos o gestores. Intentando fallback por "
+"convención..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:256
+msgid "No se encontró '{}'. Intentando fallback por clonación de Git..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:260
+msgid ""
+"Paquete '{}' no encontrado en ninguna fuente (incluyendo todos los "
+"fallbacks)."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:273
+msgid "Iniciando instalación de '{}' desde la fuente '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:281
+msgid "Paquete '{}' instalado con éxito a través de {}."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:298
+msgid "¡Paquete TPT '{}' instalado con éxito!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:301
+msgid ""
+"Instalando paquete preparado [bold magenta]{}[/bold magenta] desde AADPO..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:304
+msgid ""
+"No se encontró información del paquete '{}' en los repositorios para la "
+"instalación preparada."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:310
+msgid "El archivo preparado '{}' no se encuentra en la zona de espera."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:314
+msgid "Iniciando desinstalación de [bold magenta]{}[/bold magenta]..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:319
+msgid "El paquete fue instalado por TPT (fuente: {}). Usando manejador de TPT."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:323
+msgid ""
+"No se puede desinstalar: no se encontró el nombre del manejador en la base "
+"de datos de TPT."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:326
+msgid "El manejador '{}' necesario para la desinstalación no se encuentra."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:331
+msgid "¡Paquete '{}' desinstalado con éxito de TPT!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:333
+msgid ""
+"El paquete no está en la base de datos de TPT. Intentando desinstalación con "
+"gestores del sistema..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:341
+msgid "Paquete '{}' desinstalado con éxito a través de APT."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:350
+msgid "Paquete '{}' desinstalado con éxito a través de Flatpak."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:359
+msgid "Paquete '{}' desinstalado con éxito a través de Snap."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:363
+msgid ""
+"El paquete '{}' no se encontró ni en TPT ni en los gestores de paquetes del "
+"sistema compatibles."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:369
+msgid "[bold blue]Iniciando proceso de actualización de TPT...[/bold blue]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:370
+msgid ""
+"\n"
+"[bold]Paso 1: Buscando actualizaciones disponibles[/bold]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:374
+msgid ""
+"\n"
+"¡Todo está ya actualizado!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:377
+msgid ""
+"\n"
+"[bold]Paso 2: Preparando actualizaciones para AADPO (sin aplicar)[/bold]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:380
+msgid ""
+"\n"
+"[bold]Paso 2: Aplicando actualizaciones directamente[/bold]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:384
+msgid ""
+"\n"
+"[bold green]¡Proceso de actualización de TPT completado![/bold green]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:387
+msgid "Buscando actualizaciones para paquetes de TPT..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:403
+msgid "[green]  - Actualización para [magenta]{}[/magenta]: v{} -> v{}[/green]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:406
+msgid "No se pudo comprobar la actualización para '{}': {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:411
+msgid "Actualizando repositorios Git clonados..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:414
+msgid "Haciendo 'git pull' en [cyan]{}[/cyan]..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:430
+msgid ""
+"[green]  - Actualización para [magenta]{}[/magenta] (Git): v{} -> v{}[/green]"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:434
+msgid "No se pudo actualizar o comprobar el repositorio '{}': {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:440
+msgid "Detectando gestores de paquetes del sistema..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:442
+msgid "Gestores detectados: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:456
+msgid "Descargando {} para preparación..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:464
+msgid ""
+"Actualizaciones preparadas en {}. Se aplicarán en el próximo reinicio/"
+"apagado si AADPO está integrado."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:468
+msgid "No hay paquetes de TPT para actualizar."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:470
+msgid "Se actualizarán los siguientes paquetes de TPT: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:475
+msgid "Falló la actualización de '{}': {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:480
+msgid "Ejecutando 'apt update'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:483
+msgid "Falló 'apt update': {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:486
+msgid "Actualizando paquetes del sistema..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:489
+msgid "--- Salida de APT Upgrade ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:492
+msgid "--- Fin de la Salida de APT ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:493
+msgid "Falló la actualización de APT: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:496
+msgid "--- Salida de Flatpak Update ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:498
+msgid "--- Fin de la Salida de Flatpak ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:499
+msgid "Falló la actualización de Flatpak: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:502
+msgid "--- Salida de Snap Refresh ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:504
+msgid "--- Fin de la Salida de Snap ---"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:505
+msgid "Falló la actualización de Snap: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:508
+msgid "Integrando AADPO con systemd..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:510
+msgid "No se encontró 'systemctl'. No se puede integrar con el sistema."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:514
+msgid "No se encuentra el script '{}'. No se puede crear el servicio."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:531
+msgid "Creando fichero de servicio en {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:535
+#: tpt_project/core/package_manager.py:556
+msgid "Recargando demonio de systemd..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:537
+msgid "Activando servicio '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:539
+msgid "¡Servicio AADPO instalado y activado con éxito!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:540
+msgid ""
+"Las actualizaciones preparadas con 'tpt upgrade --no-apply' se instalarán al "
+"apagar o reiniciar."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:542
+msgid "Falló la instalación del servicio de systemd: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:545
+msgid "Desinstalando el servicio AADPO de systemd..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:547
+msgid "No se encontró 'systemctl'. No se puede desinstalar el servicio."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:552
+msgid "Desactivando servicio '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:554
+msgid "Eliminando fichero de servicio {}..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:558
+msgid "¡Servicio AADPO desinstalado con éxito!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:560
+msgid "El servicio AADPO no parece estar instalado."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:562
+msgid "Falló la desinstalación del servicio de systemd: {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:566
+msgid "Comando 'git' no encontrado. Saltando búsqueda en repositorios Git."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:582
+msgid "Clonando rama 'regular' de '{}' en '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:587
+msgid "Buscando '{}' en el manifiesto local de '{}'..."
+msgstr ""
+
+#: tpt_project/core/package_manager.py:591
+msgid "¡Paquete '{}' encontrado en el repositorio Git clonado '{}'!"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:595
+msgid "No se pudo procesar el repositorio Git '{}': {}"
+msgstr ""
+
+#: tpt_project/core/package_manager.py:607
+msgid "No se pudo leer el manifiesto de AADPO: {}"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:42
+msgid "GUI iniciada y logger conectado."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:45
+msgid "Buscar paquetes..."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:46
+msgid "Instalar"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:89 tpt_project/gui/main_window.py:118
+msgid "Detalles del Paquete"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:98
+msgid "Versión:"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:99
+msgid "Fuente:"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:100
+msgid "Formato:"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:101
+msgid "Repositorio:"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:110
+msgid "Sin descripción."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:137
+msgid "Error en el hilo de búsqueda: {}"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:146
+msgid "Búsqueda completada. Se encontraron {} paquetes."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:155
+msgid "Ya hay una acción en progreso."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:169
+msgid "Falló la instalación de '{}': {}"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:174
+msgid "Múltiples Fuentes Encontradas"
+msgstr ""
+
+#: tpt_project/gui/main_window.py:175
+msgid ""
+"El paquete '{}' está disponible en varias fuentes. Por favor, elige una para "
+"continuar."
+msgstr ""
+
+#: tpt_project/gui/main_window.py:186
+msgid "Reintentando instalación de '{}' desde la fuente '{}'..."
+msgstr ""
