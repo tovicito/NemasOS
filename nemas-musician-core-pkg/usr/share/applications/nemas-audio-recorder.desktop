@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Audio Recorder
+Exec=/usr/bin/nemas-audio-recorder
+Type=Application

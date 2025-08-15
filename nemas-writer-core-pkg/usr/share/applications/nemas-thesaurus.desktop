@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Thesaurus
+Exec=/usr/bin/nemas-thesaurus
+Type=Application

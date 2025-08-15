@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Distraction-Free Editor
+Exec=/usr/bin/nemas-distraction-free-editor
+Type=Application

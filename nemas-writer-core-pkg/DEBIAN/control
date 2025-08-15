@@ -1,0 +1,8 @@
+Package: nemas-writer-core
+Version: 1.0.0
+Architecture: all
+Maintainer: Jules <jules@agent.dev>
+Depends: python3, python3-pyqt5, python3-pyttsx3, python3-docx
+Description: Core collection of 25 utilities for writers.
+ This package provides essential tools for writing, editing, and productivity.
+ Part 1 of 2.

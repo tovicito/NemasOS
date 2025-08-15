@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Speedrun Timer
+Exec=/usr/bin/nemas-speedrun-timer
+Type=Application

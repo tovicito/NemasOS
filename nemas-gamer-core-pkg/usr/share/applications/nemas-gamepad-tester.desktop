@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Gamepad Tester
+Exec=/usr/bin/nemas-gamepad-tester
+Type=Application

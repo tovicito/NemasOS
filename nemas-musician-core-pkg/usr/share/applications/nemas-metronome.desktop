@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Metronome
+Exec=/usr/bin/nemas-metronome
+Type=Application

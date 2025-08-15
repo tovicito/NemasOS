@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Game Launcher
+Exec=/usr/bin/nemas-game-launcher
+Type=Application

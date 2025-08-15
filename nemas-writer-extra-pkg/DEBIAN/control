@@ -1,0 +1,8 @@
+Package: nemas-writer-extra
+Version: 1.0.0
+Architecture: all
+Maintainer: Jules <jules@agent.dev>
+Depends: python3, python3-pyqt5, nemas-writer-core (>= 1.0.0)
+Description: Extra collection of 25 utilities for writers.
+ This package provides creative tools for world-building and inspiration.
+ Part 2 of 2. Requires nemas-writer-core.

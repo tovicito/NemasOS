@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Name Generator
+Exec=/usr/bin/nemas-name-generator
+Type=Application

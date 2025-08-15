@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Dice Roller
+Exec=/usr/bin/nemas-dice-roller
+Type=Application

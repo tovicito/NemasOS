@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=BPM Tapper
+Exec=/usr/bin/nemas-bpm-tapper
+Type=Application

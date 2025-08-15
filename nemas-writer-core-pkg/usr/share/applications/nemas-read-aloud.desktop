@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Read Aloud
+Exec=/usr/bin/nemas-read-aloud
+Type=Application

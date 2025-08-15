@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=APM Counter
+Exec=/usr/bin/nemas-apm-counter
+Type=Application

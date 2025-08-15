@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Scale Reference
+Exec=/usr/bin/nemas-scale-reference
+Type=Application

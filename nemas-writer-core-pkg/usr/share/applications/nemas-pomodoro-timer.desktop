@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Pomodoro Timer
+Exec=/usr/bin/nemas-pomodoro-timer
+Type=Application

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Chord Finder
+Exec=/usr/bin/nemas-chord-finder
+Type=Application
