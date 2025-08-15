@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+import sys
+import os
+import argparse
+from pathlib import Path
+
+# Añadir el directorio del proyecto al sys.path para que los imports funcionen
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+# Importar y configurar i18n ANTES que cualquier otro módulo de tpt
+from tpt_project.utils.i18n import set_language, _
+
+from tpt_project.core.package_manager import PackageManager
+from tpt_project.core.config import Configuracion
+from tpt_project.utils.logger import Logger
+from tpt_project.cli import CLI
+
+def main():
+    """Punto de entrada principal para el ejecutable de TPT."""
+    # Pre-parsear argumentos solo para encontrar --lang
+    # Usamos un parser simple para no tener conflictos con el parser principal de la CLI
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument('--lang', help='Forzar un idioma (ej. es, en)')
+    args, remaining_argv = pre_parser.parse_known_args()
+
+    # Configurar el idioma antes de que cualquier otro texto se muestre
+    set_language(args.lang)
+
+    try:
+        # Configuración inicial
+        config = Configuracion()
+        logger = Logger(config=config, level=Logger.INFO).get_logger()
+
+        logger.info(_("TPT iniciado."))
+        if args.lang:
+            logger.info(_("Idioma forzado a: {}").format(args.lang))
+
+        # Iniciar el gestor de paquetes
+        pm = PackageManager(config, logger)
+
+        # Iniciar la CLI, pasándole los argumentos restantes
+        cli = CLI(pm, logger)
+        cli.run(remaining_argv)
+
+    except Exception as e:
+        print(_("Error crítico durante la inicialización de TPT: {}").format(e), file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

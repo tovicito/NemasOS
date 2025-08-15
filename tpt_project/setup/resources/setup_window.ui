@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="adw" version="1"/>
+  <template class="SetupWindow" parent="AdwApplicationWindow">
+    <property name="title">TPT Setup</property>
+    <property name="default-width">700</property>
+    <property name="default-height">550</property>
+    <property name="content">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title">TPT</property>
+                <property name="subtitle">Asistente de Configuración</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwCarousel" id="carousel">
+            <property name="vexpand">true</property>
+            <property name="allow-scroll-wheel">false</property>
+            <property name="allow-mouse-drag">false</property>
+
+            <!-- Página 1: Bienvenida -->
+            <child>
+              <object class="AdwStatusPage">
+                <property name="title">¡Bienvenido a TPT!</property>
+                <property name="description">Este asistente te guiará para configurar TPT por primera vez.</property>
+                <property name="icon-name">multimedia-player-symbolic</property>
+                <child>
+                  <object class="GtkButton" id="welcome_next_button">
+                    <property name="label">Empezar Configuración</property>
+                    <style><class name="suggested-action"/></style>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+            <!-- Página 2: Idioma -->
+            <child>
+              <object class="AdwPreferencesPage">
+                <child>
+                  <object class="AdwPreferencesGroup">
+                    <property name="title">Idioma de la Aplicación</property>
+                    <property name="description">Selecciona el idioma en el que se mostrará TPT.</property>
+                    <child>
+                      <object class="AdwComboRow" id="language_combo">
+                        <property name="title">Idioma</property>
+                        <property name="model">
+                          <object class="GtkStringList"><items><item>English</item><item>Español</item><item>Português</item></items></object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+
+            <!-- Página 3: Repositorios -->
+            <child>
+                <object class="AdwPreferencesPage">
+                    <child>
+                        <object class="AdwPreferencesGroup">
+                            <property name="title">Gestionar Repositorios</property>
+                            <property name="description">Añade o elimina las URLs de los repositorios de paquetes de TPT.</property>
+                            <child>
+                                <object class="GtkListView" id="repo_list_view">
+                                    <property name="height-request">150</property>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="AdwActionRow">
+                                    <child type="prefix">
+                                        <object class="GtkButton" id="repo_add_button"><property name="icon-name">list-add-symbolic</property></object>
+                                    </child>
+                                    <child type="prefix">
+                                        <object class="GtkButton" id="repo_remove_button"><property name="icon-name">list-remove-symbolic</property></object>
+                                    </child>
+                                    <child>
+                                        <object class="GtkEntry" id="repo_entry" placeholder-text="https://..."/>
+                                    </child>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="GtkButton" id="repo_restore_button">
+                                    <property name="label">Restaurar repositorios por defecto</property>
+                                    <property name="halign">center</property>
+                                    <property name="margin-top">12</property>
+                                </object>
+                            </child>
+                        </object>
+                    </child>
+                </object>
+            </child>
+
+            <!-- Página 4: Comportamiento -->
+            <child>
+                <object class="AdwPreferencesPage">
+                    <child>
+                        <object class="AdwPreferencesGroup">
+                            <property name="title">Comportamiento de la Terminal</property>
+                            <child>
+                                <object class="AdwSwitchRow" id="rich_switch">
+                                    <property name="title">Activar Salida Enriquecida</property>
+                                    <property name="subtitle">Usa colores, tablas y spinners (recomendado).</property>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="AdwSwitchRow" id="confirm_switch">
+                                    <property name="title">Confirmar Acciones Críticas</property>
+                                    <property name="subtitle">Pedir confirmación antes de instalar, desinstalar o actualizar.</property>
+                                </object>
+                            </child>
+                        </object>
+                    </child>
+                </object>
+            </child>
+
+            <!-- Página 5: Red y Timeouts -->
+            <child>
+                <object class="AdwPreferencesPage">
+                    <child>
+                        <object class="AdwPreferencesGroup">
+                            <property name="title">Red y Tiempos de Espera</property>
+                             <child>
+                                <object class="AdwSpinRow" id="timeout_spin">
+                                    <property name="title">Timeout de Red (segundos)</property>
+                                    <property name="subtitle">Tiempo máximo de espera para descargas.</property>
+                                    <property name="adjustment">
+                                        <object class="GtkAdjustment">
+                                            <property name="lower">5</property>
+                                            <property name="upper">120</property>
+                                            <property name="value">15</property>
+                                            <property name="step-increment">1</property>
+                                        </object>
+                                    </property>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="AdwSwitchRow" id="ssl_switch">
+                                    <property name="title">Verificar Certificados SSL</property>
+                                    <property name="subtitle">Desactivar solo si sabes lo que haces (inseguro).</property>
+                                </object>
+                            </child>
+                        </object>
+                    </child>
+                </object>
+            </child>
+
+            <!-- Página 6: AADPO -->
+            <child>
+                <object class="AdwPreferencesPage">
+                    <child>
+                        <object class="AdwPreferencesGroup">
+                            <property name="title">Actualizaciones en Apagado (AADPO)</property>
+                             <child>
+                                <object class="AdwSwitchRow" id="aadpo_switch">
+                                    <property name="title">Activar AADPO</property>
+                                    <property name="subtitle">Instala actualizaciones automáticamente al apagar/reiniciar el sistema.</property>
+                                </object>
+                            </child>
+                        </object>
+                    </child>
+                </object>
+            </child>
+
+            <!-- Página 7: Finalización -->
+            <child>
+              <object class="AdwStatusPage">
+                <property name="title">¡Configuración Lista!</property>
+                <property name="description">Revisa tus selecciones. Haz clic en 'Aplicar y Finalizar' para guardar la configuración.</property>
+                <property name="icon-name">emblem-ok-symbolic</property>
+                <child>
+                  <object class="GtkButton" id="finish_button">
+                    <property name="label">Aplicar y Finalizar</property>
+                    <style><class name="suggested-action"/></style>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+          </object>
+        </child>
+        <child>
+            <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="margin-bottom">12</property>
+                <child>
+                    <object class="GtkButton" id="back_button">
+                        <property name="label">Atrás</property>
+                        <property name="margin-start">12</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="AdwCarouselIndicatorDots"><property name="carousel">carousel</property><property name="hexpand">true</property></object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="next_button">
+                        <property name="label">Siguiente</property>
+                        <property name="margin-end">12</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
