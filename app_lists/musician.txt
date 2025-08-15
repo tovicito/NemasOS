@@ -1,0 +1,6 @@
+audio_player_gui.py
+audio_recorder_gui.py
+bpm_tapper_gui.py
+chord_finder_gui.py
+metronome_gui.py
+scale_reference_gui.py

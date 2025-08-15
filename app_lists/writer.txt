@@ -1,0 +1,9 @@
+buscar_reemplazar_gui.py
+contador_caracteres_gui.py
+contador_lineas_gui.py
+distraction_free_editor_gui.py
+editor_texto_gui.py
+lorem_ipsum_gui.py
+name_generator_gui.py
+read_aloud_gui.py
+thesaurus_gui.py
