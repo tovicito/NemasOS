@@ -1,0 +1,24 @@
+{
+    "repository_name": "Repositorio de Prueba Local",
+    "last_updated": "2025-08-12T12:00:00Z",
+    "packages": {
+        "dummy-script": {
+            "version": "1.0",
+            "description": "Un script de prueba que no hace nada.",
+            "download_url": "http://localhost:8000/dummy-script.sh",
+            "sha256": "1608ced841dcd1de6738d2bd101b2040c43724c06a0690ebd82eff332bdebfdb",
+            "extension": ".sh",
+            "metadata": {
+                "terminal": "true",
+                "icon_url": "https://raw.githubusercontent.com/GNOME/gnome-terminal/master/data/icons/48x48/gnome-terminal.png"
+            }
+        },
+        "dummy-deb": {
+            "version": "0.1.0",
+            "description": "Un paquete .deb de prueba (vacío).",
+            "download_url": "http://localhost:8000/dummy-deb.deb",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "extension": ".deb"
+        }
+    }
+}

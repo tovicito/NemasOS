@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+import sys
+from pathlib import Path
+
+# --- Configuración del Path ---
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+# --- Lanzador de la Aplicación ---
+def launch():
+    """Importa y ejecuta la GUI principal de TPT."""
+    try:
+        import gi
+        gi.require_version('Gtk', '4.0')
+        gi.require_version('Adw', '1')
+    except (ImportError, ValueError) as e:
+        print(f"Error: Faltan dependencias de la GUI (GTK4/Adw). {e}")
+        print("En Debian/Ubuntu, prueba: sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1")
+        sys.exit(1)
+
+    # Importar los módulos de TPT después de verificar dependencias
+    from tpt_project.core.config import Configuracion
+    from tpt_project.utils.logger import Logger
+    import logging
+    from tpt_project.core.package_manager import PackageManager
+    from tpt_project.gui.main_window import run_gui
+
+    # Configuración básica para la GUI
+    config = Configuracion()
+    logger = Logger(config=config, level=logging.INFO).get_logger()
+    pm = PackageManager(config, logger)
+
+    # Lanzar la GUI
+    run_gui(pm)
+
+if __name__ == "__main__":
+    launch()

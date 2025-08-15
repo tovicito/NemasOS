@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+import sys
+import json
+import os
+from pathlib import Path
+
+# Añadir el directorio del proyecto al sys.path para que los imports funcionen
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+from tpt_project.core.package_manager import PackageManager
+from tpt_project.core.config import Configuracion
+from tpt_project.utils.logger import Logger, TPTError
+
+def run_aadpo():
+    """
+    Ejecuta las acciones de actualización pendientes definidas en el manifiesto AADPO.
+    Este script está diseñado para ser ejecutado de forma no interactiva.
+    """
+    config = Configuracion()
+    logger = Logger(config=config, level=Logger.INFO, log_file=config.LOG_FILE_AADPO).get_logger()
+
+    logger.info("--- Inicio del proceso AADPO ---")
+
+    try:
+        manifest_path = config.DIR_STAGING / "aadpo_manifest.json"
+        if not manifest_path.exists():
+            logger.info("No se encontró manifiesto AADPO. No hay nada que hacer.")
+            return
+
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+        except Exception as e:
+            logger.error(f"No se pudo leer o parsear el manifiesto AADPO: {e}")
+            return
+
+        pm = PackageManager(config, logger)
+        actions = manifest.get("actions", [])
+
+        logger.info(f"Se encontraron {len(actions)} acciones pendientes en el manifiesto.")
+
+        # Actualizar fuentes del sistema si es necesario (ej. apt update)
+        if any(a.get("action") == "sys_update" and a.get("manager") == "apt" for a in actions):
+            logger.info("Actualizando fuentes de APT antes de las instalaciones...")
+            try:
+                pm._apply_system_updates_sources()
+                logger.info("Fuentes de APT actualizadas con éxito.")
+            except TPTError as e:
+                logger.error(f"Fallo al actualizar las fuentes de APT: {e}")
+
+        # Ejecutar cada acción
+        for i, action in enumerate(actions, 1):
+            logger.info(f"--- Procesando acción {i}/{len(actions)}: {action} ---")
+            try:
+                action_type = action.get("action")
+                if action_type == "install_tpt":
+                    pkg_name = action.get("name")
+                    pkg_file = action.get("file")
+                    logger.info(f"Ejecutando AADPO: instalando paquete TPT '{pkg_name}'...")
+                    pm.install_from_staged_file(pkg_name, pkg_file)
+                    logger.info(f"Acción 'install_tpt' para '{pkg_name}' completada.")
+
+                elif action_type == "sys_update":
+                    manager = action.get("manager")
+                    logger.info(f"Ejecutando AADPO: actualizando paquetes del sistema con '{manager}'...")
+                    pm._apply_system_package_updates({manager: True})
+                    logger.info(f"Acción 'sys_update' para '{manager}' completada.")
+
+                else:
+                    logger.warning(f"Acción desconocida en el manifiesto: '{action_type}'")
+
+            except Exception as e:
+                logger.error(f"Falló la acción de AADPO ({action}): {e}", exc_info=True)
+
+        # Limpiar el manifiesto después de procesarlo
+        try:
+            manifest_path.unlink()
+            logger.info("Manifiesto AADPO procesado y eliminado.")
+        except OSError as e:
+            logger.error(f"No se pudo eliminar el manifiesto AADPO: {e}")
+
+    finally:
+        logger.info("--- Fin del proceso AADPO ---")
+
+if __name__ == "__main__":
+    if os.geteuid() != 0:
+        print("Este script está diseñado para ser ejecutado por systemd como root.", file=sys.stderr)
+        sys.exit(1)
+    run_aadpo()
