@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+import sys
+import os
+import argparse
+import subprocess
+import logging
+from pathlib import Path
+
+# --- Detección de primera ejecución ---
+config_dir = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "tpt"
+lang_config_file = config_dir / "lang.conf"
+first_run = not lang_config_file.exists()
+
+if first_run:
+    print("Parece que es la primera vez que ejecutas TPT.")
+    print("Lanzando el asistente de configuración...")
+    project_root_setup = Path(__file__).resolve().parent
+    setup_script = project_root_setup / "tpt-setup"
+    try:
+        result = subprocess.run([str(setup_script)], check=True)
+        print("Asistente de configuración finalizado. Por favor, vuelve a ejecutar tu comando.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"Ocurrió un error al lanzar el asistente: {e}")
+        sys.exit(1)
+
+# --- Ejecución normal de TPT ---
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+from tpt_project.utils.i18n import set_language, _
+from tpt_project.core.package_manager import PackageManager
+from tpt_project.core.config import Configuracion
+from tpt_project.utils.logger import TPTLogger
+from tpt_project.cli import CLI
+
+def main():
+    """Punto de entrada principal para el ejecutable de TPT."""
+    try:
+        with open(lang_config_file, "r") as f:
+            lang_code = f.read().strip()
+        set_language(lang_code)
+    except (IOError, FileNotFoundError):
+        set_language(None)
+
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument('--lang', help=_('Forzar un idioma (ej. es, en)'))
+    pre_parser.add_argument('--debug', action='store_true', help=_('Activar salida de depuración.'))
+    args, remaining_argv = pre_parser.parse_known_args()
+
+    if args.lang:
+        set_language(args.lang)
+
+    try:
+        config = Configuracion()
+        log_level = logging.DEBUG if args.debug else logging.INFO
+        logger = TPTLogger(config, level=log_level).get_logger()
+
+        logger.info(_("TPT iniciado."))
+        if args.lang:
+            logger.info(_("Idioma forzado a: {}").format(args.lang))
+        if args.debug:
+            logger.debug(_("Modo de depuración activado."))
+
+        pm = PackageManager(config, logger)
+        cli = CLI(pm, logger)
+        cli.run(remaining_argv)
+
+    except Exception as e:
+        # Usar un logger muy básico para el error final si todo lo demás falla
+        logging.basicConfig()
+        logging.critical(_("Error crítico durante la inicialización de TPT: {}").format(e), exc_info=True)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
