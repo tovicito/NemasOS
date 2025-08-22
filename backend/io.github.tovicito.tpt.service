@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=io.github.tovicito.tpt
+Exec=/usr/lib/x86_64-linux-gnu/libexec/discover-backend-tpt
+User=root

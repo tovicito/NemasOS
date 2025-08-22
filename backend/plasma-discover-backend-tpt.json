@@ -1,0 +1,24 @@
+{
+    "KPackageStructure": "Discover/Backend",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "tovic@nemas.org",
+                "Name": "tovic"
+            }
+        ],
+        "Description": "Discover backend for TPT packages",
+        "Icon": "system-software-install",
+        "Id": "plasma-discover-backend-tpt",
+        "License": "GPL-3.0-or-later",
+        "Name": "TPT Backend",
+        "Version": "1.0",
+        "Website": "https://github.com/tovicito/TPT"
+    },
+    "X-KDE-Discover-Backend-Crazy-Mode": false,
+    "X-KDE-Discover-Backend-Executable": "plasma-discover-backend-tpt",
+    "X-KDE-Discover-Backend-Results-Provide-Application-Ids": true,
+    "X-KDE-Discover-Backend-Specific-Categories-Only": false,
+    "X-KDE-Discover-Backend-Supported-Mime-Types": [
+    ]
+}

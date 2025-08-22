@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import sys
+from pathlib import Path
+
+# --- Configuración del Path ---
+# Añadir el directorio padre del directorio 'exec' al sys.path
+# Si este script está en /path/to/project/exec/tpt-setup,
+# añadiremos /path/to/project/ al path.
+# Esto permite que Python vea 'tpt_project' como un módulo de nivel superior.
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+# --- Lanzador de la Aplicación ---
+def launch():
+    """Importa y ejecuta la GUI del asistente."""
+    try:
+        # Verificar dependencias de la GUI antes de importar
+        import gi
+        gi.require_version('Gtk', '4.0')
+        gi.require_version('Adw', '1')
+        from gi.repository import Gtk, Adw
+    except (ImportError, ValueError) as e:
+        print(f"Error: Faltan dependencias de la GUI (GTK4/Adw). {e}")
+        print("En Debian/Ubuntu, prueba: sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1")
+        sys.exit(1)
+
+    # Ahora la importación debería funcionar
+    from tpt_project.setup.main import run_setup_gui
+    run_setup_gui()
+
+if __name__ == "__main__":
+    launch()
