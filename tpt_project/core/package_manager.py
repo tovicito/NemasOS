@@ -1,6 +1,7 @@
 import json
 import hashlib
 import requests
+import threading
 import os
 from pathlib import Path
 
@@ -40,7 +41,7 @@ class PackageManager:
         self.settings = self.config.load_settings()
 
         self._session = requests.Session()
-        self._session.headers.update({"User-Agent": f"TPT-PackageManager/5.0"})
+        self._session.headers.update({"User-Agent": f"TPT-PackageManager/5.4"})
         self._session.timeout = self.settings.get("network_timeout", 15)
         self._session.verify = self.settings.get("ssl_verify", True)
 

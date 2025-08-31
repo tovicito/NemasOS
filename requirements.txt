@@ -1,4 +1,0 @@
-requests
-rich
-packaging
-PyQt6

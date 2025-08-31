@@ -1,46 +1,40 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-TPT - La Herramienta de Paquetes Total
-Punto de entrada principal para la aplicación.
-"""
-
 import sys
+import argparse
+import logging
 from pathlib import Path
 
-# Añadir el directorio del proyecto al path de Python para poder importar los módulos
-project_dir = Path(__file__).parent / 'tpt_project'
-sys.path.insert(0, str(project_dir.parent))
+# --- Configuración del Path ---
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
 
-from tpt_project.core.config import Configuracion
-from tpt_project.utils.logger import setup_logger, HAS_RICH
 from tpt_project.core.package_manager import PackageManager
-from tpt_project.cli import CLI, HAS_RICH as HAS_RICH_CLI
+from tpt_project.core.config import Configuracion
+from tpt_project.utils.logging_config import setup_logging
+from tpt_project.cli import CLI
 
 def main():
-    """Inicializa y ejecuta la aplicación TPT."""
-    
-    if not HAS_RICH or not HAS_RICH_CLI:
-        print("Error: La librería 'rich' no está instalada. TPT la necesita para funcionar.", file=sys.stderr)
-        print("Por favor, instálala con: pip install rich", file=sys.stderr)
-        sys.exit(1)
+    """Punto de entrada principal para el ejecutable de TPT."""
 
-    # 1. Cargar configuración y asegurar directorios
-    config = Configuracion()
+    parser = argparse.ArgumentParser(description="TPT Backend CLI")
+    parser.add_argument('--debug', action='store_true', help='Activar salida de depuración.')
+
+    # Este parser inicial solo busca el modo debug
+    args, remaining_argv = parser.parse_known_args()
+
+    # Configurar el logger
+    logger = setup_logging(debug=args.debug)
+
     try:
-        config.asegurar_directorios()
-    except Exception as e:
-        print(f"Error crítico al inicializar directorios: {e}", file=sys.stderr)
-        sys.exit(1)
+        config = Configuracion()
+        pm = PackageManager(config, logger)
+        cli = CLI(pm, logger)
+        # Pasamos los argumentos restantes a la CLI principal para que los procese
+        cli.run(remaining_argv)
 
-    # 2. Inicializar los componentes del núcleo
-    logger = setup_logger(config)
-    pm = PackageManager(config, logger)
-    
-    # 3. Lanzar la interfaz de línea de comandos
-    cli = CLI(pm, logger)
-    cli.run()
+    except Exception as e:
+        logger.critical(f"Error crítico en TPT: {e}", exc_info=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
