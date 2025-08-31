@@ -1,16 +1,16 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command
 from ..utils.exceptions import TPTError
+import logging
 
 class BaseHandler(ABC):
     """
     Clase base abstracta para todos los manejadores de tipos de paquete.
     Define la interfaz común que todos los manejadores deben implementar.
     """
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, **kwargs):
         self.pm = pm
         self.package_info = package_info
         self.config = config

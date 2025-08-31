@@ -1,14 +1,14 @@
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
+import logging
 
 class DebHandler(BaseHandler):
     """Manejador para instalar y desinstalar paquetes .deb."""
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("dpkg"):
@@ -20,7 +20,7 @@ class DebHandler(BaseHandler):
 
         try:
             execute_command(["dpkg", "-i", str(self.temp_path)], self.logger, as_root=True)
-            self.logger.success(f"El paquete '{self.app_name}' fue instalado por dpkg.")
+            self.logger.info(f"El paquete '{self.app_name}' fue instalado por dpkg.")
             self.logger.info("Ejecutando 'apt-get install -f' para reparar posibles dependencias rotas...")
             self.repair()
         except TPTError as e:
@@ -45,7 +45,7 @@ class DebHandler(BaseHandler):
         try:
             # Usamos -P para purgar los archivos de configuración también
             execute_command(["dpkg", "-P", package_name], self.logger, as_root=True)
-            self.logger.success(f"El paquete '{package_name}' fue desinstalado y purgado.")
+            self.logger.info(f"El paquete '{package_name}' fue desinstalado y purgado.")
         except TPTError as e:
             raise TPTError(f"La desinstalación de '{package_name}' falló: {e}")
 
@@ -57,6 +57,6 @@ class DebHandler(BaseHandler):
 
         try:
             execute_command(["apt-get", "install", "-f", "-y"], self.logger, as_root=True)
-            self.logger.success("Reparación de dependencias completada.")
+            self.logger.info("Reparación de dependencias completada.")
         except TPTError as e:
             self.logger.warning(f"La reparación de dependencias falló. Puede que necesites ejecutar 'sudo apt-get install -f' manualmente. Error: {e}")

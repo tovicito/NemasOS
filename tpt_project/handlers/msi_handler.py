@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
+import logging
 
 class MsiHandler(BaseHandler):
     """
@@ -12,7 +12,7 @@ class MsiHandler(BaseHandler):
     Similar al ExeHandler, pero usa 'msiexec'.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("wine"):
@@ -52,7 +52,7 @@ class MsiHandler(BaseHandler):
         launcher_path = self._create_launcher(wine_prefix)
         desktop_file_path = self._create_desktop_file(launcher_path)
 
-        self.logger.success(f"Aplicación '{self.app_name}' (MSI) instalada en {wine_prefix}.")
+        self.logger.info(f"Aplicación '{self.app_name}' (MSI) instalada en {wine_prefix}.")
         return {
             "handler": "MsiHandler",
             "wine_prefix": str(wine_prefix),
@@ -107,4 +107,4 @@ class MsiHandler(BaseHandler):
                 self.logger.warning(f"No se pudo eliminar el lanzador: {e}")
 
         self._cleanup_desktop_file(installation_details)
-        self.logger.success(f"Aplicación MSI '{self.app_name}' desinstalada.")
+        self.logger.info(f"Aplicación MSI '{self.app_name}' desinstalada.")

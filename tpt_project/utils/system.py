@@ -1,10 +1,11 @@
 import os
 import shutil
 import subprocess
-from .exceptions import SystemCommandError
-from .logger import Logger
+import logging
 
-def execute_command(command: list[str], logger: Logger, as_root: bool = False, stream_output: bool = False, **kwargs) -> subprocess.CompletedProcess:
+from .exceptions import SystemCommandError
+
+def execute_command(command: list[str], logger: logging.Logger, as_root: bool = False, stream_output: bool = False, **kwargs) -> subprocess.CompletedProcess:
     """
     Ejecuta un comando del sistema, manejando la elevación de privilegios (sudo) y registrando la salida.
 

@@ -1,14 +1,14 @@
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
+import logging
 
 class PowershellHandler(BaseHandler):
     """Manejador para instalar y ejecutar scripts de PowerShell (.ps1) como aplicaciones."""
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("pwsh"):
@@ -44,7 +44,7 @@ class PowershellHandler(BaseHandler):
         # Crear archivo .desktop
         desktop_file_path = self._create_desktop_file(launcher_path)
 
-        self.logger.success(f"Script de PowerShell '{self.app_name}' instalado correctamente.")
+        self.logger.info(f"Script de PowerShell '{self.app_name}' instalado correctamente.")
         return {
             "handler": "PowershellHandler",
             "install_path": str(install_path),
@@ -75,4 +75,4 @@ class PowershellHandler(BaseHandler):
                 self.logger.warning(f"No se pudo eliminar el lanzador: {e}")
 
         self._cleanup_desktop_file(installation_details)
-        self.logger.success(f"Script de PowerShell '{self.app_name}' desinstalado.")
+        self.logger.info(f"Script de PowerShell '{self.app_name}' desinstalado.")

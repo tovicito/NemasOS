@@ -4,11 +4,12 @@ from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command
 from ..utils.exceptions import TPTError
+import logging
 
 class ScriptHandler(BaseHandler):
     """Manejador para instalar y desinstalar paquetes basados en scripts."""
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
 
@@ -30,7 +31,7 @@ class ScriptHandler(BaseHandler):
         # Crear archivo .desktop si hay metadatos
         desktop_file_path = self._create_desktop_file(install_path)
 
-        self.logger.success(f"Script '{self.app_name}' instalado correctamente en {install_path}.")
+        self.logger.info(f"Script '{self.app_name}' instalado correctamente en {install_path}.")
 
         details = super().install()
         details.update({
@@ -52,7 +53,7 @@ class ScriptHandler(BaseHandler):
             self.logger.info(f"Eliminando script desde {path_to_remove}...")
             try:
                 execute_command(["rm", "-f", str(path_to_remove)], self.logger, as_root=True)
-                self.logger.success(f"Script '{self.app_name}' eliminado.")
+                self.logger.info(f"Script '{self.app_name}' eliminado.")
             except TPTError as e:
                 self.logger.warning(f"No se pudo eliminar el script {path_to_remove}: {e}")
         else:

@@ -1,10 +1,10 @@
 import re
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
+import logging
 
 class AndroidApkHandler(BaseHandler):
     """
@@ -13,7 +13,7 @@ class AndroidApkHandler(BaseHandler):
     tenga un entorno Waydroid completamente funcional.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
 
@@ -50,7 +50,7 @@ class AndroidApkHandler(BaseHandler):
         try:
             # Waydroid no necesita sudo para instalar apps
             execute_command(command, self.logger)
-            self.logger.success(f"Aplicación Android '{app_id}' enviada a Waydroid para su instalación.")
+            self.logger.info(f"Aplicación Android '{app_id}' enviada a Waydroid para su instalación.")
             self.logger.info("Waydroid gestionará la instalación en segundo plano. Puede tardar unos momentos en aparecer.")
         except TPTError as e:
             raise TPTError(f"No se pudo instalar el APK en Waydroid: {e}")
@@ -71,6 +71,6 @@ class AndroidApkHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger)
-            self.logger.success(f"Aplicación Android '{app_id_to_uninstall}' desinstalada de Waydroid.")
+            self.logger.info(f"Aplicación Android '{app_id_to_uninstall}' desinstalada de Waydroid.")
         except TPTError as e:
             raise TPTError(f"No se pudo desinstalar la aplicación de Waydroid: {e}")

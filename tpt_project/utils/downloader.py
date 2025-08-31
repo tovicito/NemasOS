@@ -58,7 +58,7 @@ def download_file(url: str, dest: Path, logger: logging.Logger, progress_callbac
                             print(f"\r[{'=' * done}{' ' * (50-done)}] {bytes_descargados}/{total_size} bytes", end='')
                 print()
 
-        logger.success(f"Archivo guardado en [green]{dest}[/green]")
+        logger.info(f"Archivo guardado en [green]{dest}[/green]")
 
     except (requests.exceptions.RequestException, IOError) as e:
         logger.error(f"Fallo al descargar o guardar {url}: {e}")

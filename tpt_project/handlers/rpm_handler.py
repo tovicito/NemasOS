@@ -4,6 +4,7 @@ from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
+import logging
 
 class RpmHandler(BaseHandler):
     """
@@ -11,7 +12,7 @@ class RpmHandler(BaseHandler):
     Prioritiza el uso de gestores de alto nivel como DNF o Zypper.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         self.pm_tool = self._detect_package_manager()
@@ -60,7 +61,7 @@ class RpmHandler(BaseHandler):
         try:
             execute_command(command, self.logger, as_root=True)
             package_name = self._get_package_name_from_rpm()
-            self.logger.success(f"Paquete RPM '{package_name}' instalado con éxito.")
+            self.logger.info(f"Paquete RPM '{package_name}' instalado con éxito.")
         except TPTError as e:
             raise TPTError(f"La instalación del RPM falló: {e}")
 
@@ -86,6 +87,6 @@ class RpmHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger, as_root=True)
-            self.logger.success(f"Paquete RPM '{package_name}' desinstalado.")
+            self.logger.info(f"Paquete RPM '{package_name}' desinstalado.")
         except TPTError as e:
             raise TPTError(f"La desinstalación del RPM '{package_name}' falló: {e}")

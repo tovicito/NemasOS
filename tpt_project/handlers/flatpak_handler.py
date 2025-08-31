@@ -1,8 +1,8 @@
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
+import logging
 
 class FlatpakHandler(BaseHandler):
     """
@@ -10,7 +10,7 @@ class FlatpakHandler(BaseHandler):
     Este manejador no descarga un archivo, sino que interactúa con el demonio de Flatpak.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         if not check_dependency("flatpak"):
             raise CriticalTPTError("El comando 'flatpak' no se encuentra. TPT no puede gestionar aplicaciones Flatpak.")
@@ -36,7 +36,7 @@ class FlatpakHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger)
-            self.logger.success(f"Aplicación Flatpak '{self.app_id}' instalada correctamente.")
+            self.logger.info(f"Aplicación Flatpak '{self.app_id}' instalada correctamente.")
         except TPTError as e:
             self.logger.error(f"La instalación de Flatpak falló. Comprueba que el remote '{self.remote}' está añadido (`flatpak remotes`).")
             raise TPTError(f"No se pudo instalar la aplicación Flatpak '{self.app_id}': {e}")
@@ -61,6 +61,6 @@ class FlatpakHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger)
-            self.logger.success(f"Aplicación Flatpak '{app_id_to_uninstall}' desinstalada.")
+            self.logger.info(f"Aplicación Flatpak '{app_id_to_uninstall}' desinstalada.")
         except TPTError as e:
             raise TPTError(f"No se pudo desinstalar la aplicación Flatpak '{app_id_to_uninstall}': {e}")

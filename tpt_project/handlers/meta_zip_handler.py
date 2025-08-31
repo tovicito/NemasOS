@@ -6,6 +6,7 @@ from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
+import logging
 
 class MetaZipHandler(BaseHandler):
     """
@@ -13,7 +14,7 @@ class MetaZipHandler(BaseHandler):
     sub-paquete listado en un manifiesto interno.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("unzip"):
@@ -86,4 +87,4 @@ class MetaZipHandler(BaseHandler):
             except Exception as e:
                 self.logger.error(f"Falló la desinstalación del sub-paquete '{sub_pkg_name}': {e}")
 
-        self.logger.success(f"Meta-paquete '{self.app_name}' desinstalado.")
+        self.logger.info(f"Meta-paquete '{self.app_name}' desinstalado.")

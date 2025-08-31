@@ -3,6 +3,7 @@ from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
+import logging
 
 class SnapHandler(BaseHandler):
     """
@@ -10,7 +11,7 @@ class SnapHandler(BaseHandler):
     Este manejador interactúa con el demonio snapd.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         if not check_dependency("snap"):
             raise CriticalTPTError("El comando 'snap' no se encuentra. TPT no puede gestionar aplicaciones Snap.")
@@ -39,7 +40,7 @@ class SnapHandler(BaseHandler):
         try:
             # La instalación de Snaps requiere privilegios de root
             execute_command(command, self.logger, as_root=True)
-            self.logger.success(f"Snap '{self.snap_name}' instalado correctamente.")
+            self.logger.info(f"Snap '{self.snap_name}' instalado correctamente.")
         except TPTError as e:
             raise TPTError(f"No se pudo instalar el Snap '{self.snap_name}': {e}")
 
@@ -60,6 +61,6 @@ class SnapHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger, as_root=True)
-            self.logger.success(f"Snap '{snap_to_uninstall}' desinstalado.")
+            self.logger.info(f"Snap '{snap_to_uninstall}' desinstalado.")
         except TPTError as e:
             raise TPTError(f"No se pudo desinstalar el Snap '{snap_to_uninstall}': {e}")

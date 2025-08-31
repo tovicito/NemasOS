@@ -1,14 +1,14 @@
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command
 from ..utils.exceptions import TPTError
+import logging
 
 class AppImageHandler(BaseHandler):
     """Manejador para instalar y desinstalar paquetes .AppImage."""
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
 
@@ -43,7 +43,7 @@ class AppImageHandler(BaseHandler):
         # 5. Crear archivo .desktop
         desktop_file_path = self._create_desktop_file(symlink_path)
 
-        self.logger.success(f"AppImage '{self.app_name}' instalada correctamente.")
+        self.logger.info(f"AppImage '{self.app_name}' instalada correctamente.")
 
         details = super().install()
         details.update({
@@ -77,4 +77,4 @@ class AppImageHandler(BaseHandler):
 
         # Limpiar el archivo .desktop
         self._cleanup_desktop_file(installation_details)
-        self.logger.success(f"AppImage '{self.app_name}' desinstalada.")
+        self.logger.info(f"AppImage '{self.app_name}' desinstalada.")

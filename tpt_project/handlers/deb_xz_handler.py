@@ -5,6 +5,7 @@ from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
+import logging
 
 class DebXzHandler(BaseHandler):
     """
@@ -12,7 +13,7 @@ class DebXzHandler(BaseHandler):
     Actúa como un pre-procesador para DebHandler.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+    def __init__(self, pm, package_info: dict, config, logger: logging.Logger, temp_path: Path, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("unxz"):

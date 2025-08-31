@@ -1,9 +1,9 @@
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
+import logging
 
 class AlpineApkHandler(BaseHandler):
     """
@@ -11,7 +11,7 @@ class AlpineApkHandler(BaseHandler):
     Este manejador solo funciona si TPT se ejecuta en Alpine Linux.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path = None, **kwargs):
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: logging.Logger, temp_path: Path = None, **kwargs):
         super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
 
@@ -38,7 +38,7 @@ class AlpineApkHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger, as_root=True)
-            self.logger.success(f"Paquete de Alpine '{self.package_name}' instalado con éxito.")
+            self.logger.info(f"Paquete de Alpine '{self.package_name}' instalado con éxito.")
         except TPTError as e:
             raise TPTError(f"No se pudo instalar el paquete de Alpine '{self.package_name}': {e}")
 
@@ -58,6 +58,6 @@ class AlpineApkHandler(BaseHandler):
 
         try:
             execute_command(command, self.logger, as_root=True)
-            self.logger.success(f"Paquete de Alpine '{package_to_uninstall}' desinstalado.")
+            self.logger.info(f"Paquete de Alpine '{package_to_uninstall}' desinstalado.")
         except TPTError as e:
             raise TPTError(f"No se pudo desinstalar el paquete de Alpine '{package_to_uninstall}': {e}")
