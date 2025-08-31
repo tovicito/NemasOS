@@ -1,7 +1,7 @@
 from pathlib import Path
 from .base_handler import BaseHandler
 from .deb_handler import DebHandler
-from ..utils.logger import Logger
+import logging
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
