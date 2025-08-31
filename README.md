@@ -10,8 +10,8 @@ Aquí, en Nemás, no nos interesa cuantas horas ves videos de gatitos adorables,
 **TPT**
 TPT (Total Package Tool) es una herramienta escrita en python hecha para que CUALQUIER PAQUETE (si, desde un .deb hasta un .exe) funcione fácilmente sin necesidad de hacer nada, TODAVÍA EN BETA
 
+# Última versión de Nemás OS
+Nemás OS 1.0 BETA 
 
-**VERSIONES DE BRANCH Y FUNCIONAMIENTO DE TPT**
-tpt crea un archivo actual-branch.txt que contiene el texto "regular", eso hace que los repos de sources guardados en tpt-sources.list (tpt lo genera solo en el primer arranque con algunos repos) apliquen esta estructura, por ejemplo, al tener el repo oficial (github.com/tovicito/NemásOS/) pues se junta con la rama (la que tenga en tpt-sources.list) y el nombre del paquete y extensión (la ext. mira todas hasta encontrar una valida en una url valida), p.ej. si tenemos el repo oficial + tpt + branch regular + descargar el paquete "ejemplo" + que la extensión es .py: ejecutaremos "sudo tpt --install ejemplo", luego, tpt generará urls como "https://raw.githubusercontent.com/tovicito/NemasOS/regular/ejemplo.sh" y irá por todas las url y extensiones hasta encontrar uno que responda y entonces, lo descargará
-
-Esperamos que tengas una experiencia satisfactoria con Nemás OS, atentamente, Equipo de desarrollo de NemásOS (EDNO)
+# Web Actualizada
+tovicito.github.io/nemas.github.io
