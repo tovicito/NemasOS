@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nemas WebCar - Mapa</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #282c34; /* Match the app's dark theme */
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    // Initialize the map and set its view to a default location
+    var map = L.map('map').setView([40.416775, -3.703790], 13); // Centered on Madrid, Spain
+
+    // Add a tile layer from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Example function to be called from Python
+    function setMapView(lat, lon, zoom) {
+        map.setView([lat, lon], zoom);
+    }
+
+    function addMarker(lat, lon, popupText) {
+        L.marker([lat, lon]).addTo(map)
+            .bindPopup(popupText)
+            .openPopup();
+    }
+
+    var gpsMarker = null;
+    function updateGpsMarker(lat, lon) {
+        if (gpsMarker) {
+            gpsMarker.setLatLng([lat, lon]);
+        } else {
+            // You can customize the icon here later
+            gpsMarker = L.marker([lat, lon]).addTo(map);
+        }
+        map.setView([lat, lon], 16); // Center map on new GPS location
+    }
+</script>
+
+</body>
+</html>
