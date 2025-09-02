@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QFont
-from nemas_webcar.style import *
+from ..style import *
 
 class MusicPage(QWidget):
     def __init__(self):

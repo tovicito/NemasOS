@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QFormLayout, QLineEdit,
                              QCheckBox, QComboBox, QPushButton, QLabel)
 from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QFont
-from nemas_webcar.style import *
+from ..style import *
 
 class SettingsPage(QWidget):
     def __init__(self):

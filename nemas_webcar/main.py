@@ -5,12 +5,12 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont
 
 # Import the new pages
-from app.settings_page import SettingsPage
-from app.map_page import MapPage
-from app.music_page import MusicPage
+from .app.settings_page import SettingsPage
+from .app.map_page import MapPage
+from .app.music_page import MusicPage
 
 # Import shared style constants
-from nemas_webcar.style import *
+from .style import *
 
 # A simple placeholder widget for our app pages
 class Page(QLabel):

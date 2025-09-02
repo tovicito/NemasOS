@@ -6,7 +6,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtCore import QUrl, pyqtSlot, QThread, QObject, pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from nemas_webcar.style import *
+from ..style import *
 
 # Try to import gpsd, but don't fail if it's not there (for testing on systems without it)
 try:
