@@ -63,7 +63,7 @@ class MusicPage(QWidget):
 
         self.current_song_label = QLabel("Ninguna canción seleccionada")
         self.current_song_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.current_song_label.setFont(QFont(KIA_FONT, 14, QFont.Weight.Bold))
+        self.current_song_label.setFont(QFont(KIA_FONT_FAMILY, 14, QFont.Weight.Bold))
         layout.addWidget(self.current_song_label)
 
         self.progress_slider = QSlider(Qt.Orientation.Horizontal)
