@@ -1,6 +1,5 @@
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command
 from ..utils.exceptions import TPTError
