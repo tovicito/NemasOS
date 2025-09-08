@@ -5,7 +5,6 @@ import logging
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError
-import logging
 
 class DebXzHandler(BaseHandler):
     """

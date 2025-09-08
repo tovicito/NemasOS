@@ -2,7 +2,6 @@ import json
 import tempfile
 from pathlib import Path
 from .base_handler import BaseHandler
-from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
