@@ -55,6 +55,9 @@
         }
         map.setView([lat, lon], 16); // Center map on new GPS location
     }
+
+    // Signal to Python that Leaflet is loaded and ready
+    console.log("LEAFLET_LOADED");
 </script>
 
 </body>

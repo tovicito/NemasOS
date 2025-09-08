@@ -110,34 +110,52 @@ class MusicPage(QWidget):
         self.player.durationChanged.connect(self.update_slider_range)
         self.player.mediaStatusChanged.connect(self.handle_media_status)
 
+        self.update_ui_state()
+
     def add_music_folder(self):
-        folder = QFileDialog.getExistingDirectory(self, "Seleccionar Carpeta de Música")
-        if folder:
-            for file in os.listdir(folder):
-                if file.lower().endswith(('.mp3', '.flac', '.wav', '.m4a')):
-                    path = os.path.join(folder, file)
+        # Changed to scan a predefined folder for robustness and testability
+        music_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets', 'music'))
+        if not os.path.exists(music_dir):
+            print(f"Directorio de música de prueba no encontrado: {music_dir}")
+            return
+
+        for file in os.listdir(music_dir):
+            if file.lower().endswith(('.mp3', '.flac', '.wav', '.m4a')):
+                path = os.path.join(music_dir, file)
+                if path not in self.playlist:
                     self.playlist.append(path)
                     item = QListWidgetItem(os.path.basename(path))
                     self.playlist_widget.addItem(item)
+
+        self.update_ui_state()
 
     def play_song_from_list(self, item):
         self.current_index = self.playlist_widget.row(item)
         self.play_current_song()
 
     def play_current_song(self):
-        if 0 <= self.current_index < len(self.playlist):
-            path = self.playlist[self.current_index]
-            self.player.setSource(QUrl.fromLocalFile(path))
-            self.player.play()
-            self.play_pause_button.setText("Pause")
-            self.current_song_label.setText(os.path.basename(path))
+        if not self.playlist or not (0 <= self.current_index < len(self.playlist)):
+            return
+
+        path = self.playlist[self.current_index]
+        self.player.setSource(QUrl.fromLocalFile(path))
+        self.player.play()
+        self.play_pause_button.setText("Pause")
+        self.current_song_label.setText(os.path.basename(path))
 
     def toggle_play_pause(self):
+        if not self.playlist:
+            return
+
         if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.player.pause()
             self.play_pause_button.setText("Play")
         else:
-            self.player.play()
+            # If no song is loaded, play the first one
+            if self.player.source() == QUrl():
+                self.play_current_song()
+            else:
+                self.player.play()
             self.play_pause_button.setText("Pause")
 
     def update_slider(self, position):
@@ -155,15 +173,23 @@ class MusicPage(QWidget):
             self.play_next()
 
     def play_next(self):
-        if self.playlist:
-            # Fixed logic as per code review
-            self.current_index = (self.current_index - 1 + len(self.playlist)) % len(self.playlist)
-            self.playlist_widget.setCurrentRow(self.current_index)
-            self.play_current_song()
+        if not self.playlist:
+            return
+        self.current_index = (self.current_index + 1) % len(self.playlist)
+        self.playlist_widget.setCurrentRow(self.current_index)
+        self.play_current_song()
 
     def play_prev(self):
-        if self.playlist:
-            # Fixed logic as per code review
-            self.current_index = (self.current_index - 1 + len(self.playlist)) % len(self.playlist)
-            self.playlist_widget.setCurrentRow(self.current_index)
-            self.play_current_song()
+        if not self.playlist:
+            return
+        self.current_index = (self.current_index - 1 + len(self.playlist)) % len(self.playlist)
+        self.playlist_widget.setCurrentRow(self.current_index)
+        self.play_current_song()
+
+    def update_ui_state(self):
+        """Enable/disable buttons based on playlist content."""
+        has_music = bool(self.playlist)
+        self.play_pause_button.setEnabled(has_music)
+        self.prev_button.setEnabled(has_music)
+        self.next_button.setEnabled(has_music)
+        self.progress_slider.setEnabled(has_music)
