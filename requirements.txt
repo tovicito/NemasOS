@@ -1,0 +1,2 @@
+# No hay dependencias externas además de las de la GUI que se instalan por separado.
+# (pydbus, polib, etc. se instalan como parte del proceso)

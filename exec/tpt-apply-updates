@@ -11,7 +11,7 @@ sys.path.insert(0, str(project_root))
 
 from tpt_project.core.package_manager import PackageManager
 from tpt_project.core.config import Configuracion
-from tpt_project.utils.logger import TPTLogger
+from tpt_project.utils.logging_config import setup_logging
 from tpt_project.utils.exceptions import TPTError
 
 def run_aadpo():
@@ -19,14 +19,15 @@ def run_aadpo():
     Ejecuta las acciones de actualización pendientes definidas en el manifiesto AADPO.
     Este script está diseñado para ser ejecutado de forma no interactiva.
     """
-    config = Configuracion()
     # Para AADPO, siempre queremos un log detallado
-    logger = TPTLogger(config, level=logging.DEBUG).get_logger()
+    logger = setup_logging(debug=True)
 
     logger.info("--- Inicio del proceso AADPO ---")
 
     try:
+        config = Configuracion()
         manifest_path = config.DIR_STAGING / "aadpo_manifest.json"
+
         if not manifest_path.exists():
             logger.info("No se encontró manifiesto AADPO. No hay nada que hacer.")
             return

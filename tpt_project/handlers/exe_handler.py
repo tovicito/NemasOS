@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from .base_handler import BaseHandler
+from ..utils.logger import Logger
 from ..core.config import Configuracion
 from ..utils.system import execute_command, check_dependency
 from ..utils.exceptions import TPTError, CriticalTPTError, VerificationError
@@ -11,8 +12,8 @@ class ExeHandler(BaseHandler):
     Depende en gran medida de metadatos precisos en el manifiesto del paquete.
     """
 
-    def __init__(self, pm, package_info: dict, config: Configuracion, temp_path: Path, **kwargs):
-        super().__init__(pm, package_info, config, **kwargs)
+    def __init__(self, pm, package_info: dict, config: Configuracion, logger: Logger, temp_path: Path, **kwargs):
+        super().__init__(pm, package_info, config, logger, **kwargs)
         self.temp_path = temp_path
         if not check_dependency("wine"):
             raise CriticalTPTError("El comando 'wine' no se encuentra. TPT no puede gestionar aplicaciones .exe.")

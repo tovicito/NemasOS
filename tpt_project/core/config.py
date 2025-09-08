@@ -44,7 +44,6 @@ class Configuracion:
         ]
 
         self.SETTINGS_POR_DEFECTO = {
-            "use_rich": True,
             "confirm_actions": True,
             "aadpo_enabled": False,
             "network_timeout": 15,
