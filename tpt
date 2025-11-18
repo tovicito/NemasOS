@@ -411,6 +411,64 @@ def descargar_remoto(url, nombre_destino_temp, gui_output=None):
     except requests.exceptions.Timeout:
         mostrar_mensaje(f"Tiempo de espera agotado al descargar de {url}.", tipo="error", gui_output=gui_output)
         return False
+
+
+def preparar_repo_local(repo_url, branch='regular', gui_output=None):
+    """
+    Clona o actualiza un repositorio localmente dentro de `TPT_STATE_DIR/repos/<repo>/<branch>`.
+    Devuelve la ruta local donde está el repo o None en caso de error.
+    """
+    try:
+        repo_name = repo_url.rstrip('/').split('/')[-1]
+        repo_name = repo_name.replace('.git', '')
+        base_dir = os.path.join(TPT_STATE_DIR, 'repos', repo_name, branch)
+        if not os.path.exists(os.path.join(TPT_STATE_DIR, 'repos')):
+            os.makedirs(os.path.join(TPT_STATE_DIR, 'repos'), exist_ok=True)
+
+        if os.path.exists(base_dir):
+            mostrar_mensaje(f"Repositorio local ya existe en '{base_dir}'. Intentando actualizar...", gui_output=gui_output)
+            try:
+                subprocess.run(['git', '-C', base_dir, 'fetch', '--all'], check=True, text=True)
+                subprocess.run(['git', '-C', base_dir, 'checkout', branch], check=True, text=True)
+                subprocess.run(['git', '-C', base_dir, 'pull', 'origin', branch], check=True, text=True)
+                mostrar_mensaje(f"Repositorio '{repo_name}' actualizado en rama '{branch}'.", gui_output=gui_output)
+            except subprocess.CalledProcessError as e:
+                mostrar_mensaje(f"No se pudo actualizar el repo local: {e}. Se usará la copia existente si es válida.", tipo="advertencia", gui_output=gui_output)
+        else:
+            mostrar_mensaje(f"Clonando '{repo_url}' (rama: {branch}) en '{base_dir}'...", gui_output=gui_output)
+            try:
+                subprocess.run(['git', 'clone', '--depth', '1', '--branch', branch, repo_url, base_dir], check=True, text=True)
+                mostrar_mensaje(f"Repositorio clonado en '{base_dir}'.", gui_output=gui_output)
+            except subprocess.CalledProcessError as e:
+                mostrar_mensaje(f"Error al clonar el repositorio: {e}", tipo="error", gui_output=gui_output)
+                return None
+
+        return base_dir
+    except Exception as e:
+        mostrar_mensaje(f"Error inesperado preparando repo local: {e}", tipo="error", gui_output=gui_output)
+        return None
+
+
+def buscar_paquete_en_repo_local(repo_dir, nombre_app, gui_output=None):
+    """
+    Busca recursivamente en `repo_dir` por archivos cuyo nombre base coincida con `nombre_app`.
+    Devuelve la ruta al primer archivo encontrado o None.
+    """
+    if not repo_dir or not os.path.exists(repo_dir):
+        return None
+    mostrar_mensaje(f"Buscando '{nombre_app}' en copia local del repo: {repo_dir}", gui_output=gui_output)
+    try:
+        for root, dirs, files in os.walk(repo_dir):
+            for file in files:
+                base, ext = os.path.splitext(file)
+                if base == nombre_app:
+                    candidate = os.path.join(root, file)
+                    mostrar_mensaje(f"Encontrado paquete local: {candidate}", gui_output=gui_output)
+                    return candidate
+        return None
+    except Exception as e:
+        mostrar_mensaje(f"Error buscando en repo local: {e}", tipo="advertencia", gui_output=gui_output)
+        return None
     except requests.exceptions.ConnectionError as e:
         mostrar_mensaje(f"Error de conexión al descargar de {url}: {e}", tipo="error", gui_output=gui_output)
         return False
@@ -429,6 +487,22 @@ def instalar_desde_remoto(nombre_app, gui_output=None):
     repos = leer_urls_repositorio(TPT_REPOS_LIST, gui_output)
     rama = leer_rama_actual(ACTUAL_BRANCH_TXT, gui_output)
     mostrar_mensaje(f"Usando rama '{rama}' para la descarga.", gui_output=gui_output)
+
+    # --- Intentar método principal: usar copia local del repo oficial ---
+    local_repo_url = "https://github.com/tovicito/NemasOS"
+    repo_local_dir = preparar_repo_local(local_repo_url, branch='regular', gui_output=gui_output)
+    if repo_local_dir:
+        paquete_local = buscar_paquete_en_repo_local(repo_local_dir, nombre_app, gui_output=gui_output)
+        if paquete_local:
+            ruta_paquete_descargado = paquete_local
+            extension_encontrada = os.path.splitext(paquete_local)[1]
+            descargado_con_exito = True
+            mostrar_mensaje(f"Usando paquete encontrado en repo local: {ruta_paquete_descargado}", gui_output=gui_output)
+
+    if not descargado_con_exito:
+        # Si no se encontró localmente, proceder con la búsqueda remota como antes
+        if not repos:
+            mostrar_error_y_salir("No hay repositorios configurados en tpt-repos.list.", gui_output=gui_output)
 
     if not repos:
         mostrar_error_y_salir("No hay repositorios configurados en tpt-repos.list.", gui_output=gui_output)
