@@ -1,5 +1,4 @@
 import logging
-import shutil
 import subprocess
 import threading
 from gi.repository import GLib, Gio, GObject
@@ -73,78 +72,78 @@ class PackageManager(GObject.Object):
 
             if self.settings.get_boolean('use-flatpak'):
                 try:
-                    if term:
-                        res = self._run(['flatpak', 'search', term, '--columns=application,name,description,version,icon'])
-                        if res and res.returncode == 0:
-                            for line in res.stdout.splitlines():
-                                parts = [p.strip() for p in line.split('\t')]
-                                if len(parts) >= 2:
-                                    apps.append(AppInfo(parts[0], parts[1], parts[2] if len(parts) > 2 else '', parts[4] if len(parts) > 4 and parts[4] else 'application-x-executable', 'Flatpak', version=parts[3] if len(parts) > 3 else ''))
+                    cmd = ['flatpak', 'search', '--columns=application,name,description,version,icon', search_term] if search_term else ['flatpak', 'remote-ls', '--columns=application,name,description,version,icon', '--app']
+                    res = subprocess.run(cmd, capture_output=True, text=True)
+                    if res.returncode == 0:
+                        for line in res.stdout.strip().split('\n'):
+                            parts = line.split('\t')
+                            if len(parts) >= 3:
+                                apps.append(AppInfo(parts[0].strip(), parts[1].strip(), parts[2].strip(), parts[4].strip() if len(parts) > 4 else 'application-x-executable', 'Flatpak', version=parts[3].strip() if len(parts) > 3 else ''))
                     else:
-                        apps.extend(self._flatpak_featured())
-                except Exception:
-                    LOG.exception('Failed to load Flatpak apps')
+                        LOG.warning('flatpak command failed: %s', res.stderr.strip())
+                except Exception as exc:
+                    LOG.exception('Failed to load Flatpak apps: %s', exc)
 
-            if self.settings.get_boolean('use-snap') and term:
+            if self.settings.get_boolean('use-snap'):
                 try:
-                    res = self._run(['snap', 'find', term])
-                    if res and res.returncode == 0:
-                        lines = [l for l in res.stdout.splitlines() if l.strip()]
-                        for line in lines[1:]:
-                            parts = line.split()
-                            if parts:
-                                name = parts[0]
-                                summary = ' '.join(parts[3:]) if len(parts) > 3 else ''
-                                apps.append(AppInfo(name, name, summary, 'io.snapcraft.SnapStore', 'Snap'))
-                except Exception:
-                    LOG.exception('Failed to load Snap apps')
+                    if search_term:
+                        res = subprocess.run(['snap', 'find', search_term], capture_output=True, text=True)
+                        if res.returncode == 0:
+                            lines = res.stdout.strip().split('\n')
+                            if len(lines) > 1:
+                                for line in lines[1:]:
+                                    parts = line.split()
+                                    if len(parts) >= 1:
+                                        apps.append(AppInfo(parts[0], parts[0], ' '.join(parts[3:]) if len(parts) > 3 else '', 'snap', 'Snap'))
+                        else:
+                            LOG.warning('snap find failed: %s', res.stderr.strip())
+                except Exception as exc:
+                    LOG.exception('Failed to load Snap apps: %s', exc)
 
-            if self.settings.get_boolean('use-packagekit') and term:
+            if self.settings.get_boolean('use-packagekit'):
                 try:
-                    res = self._run(['pkcon', 'search', 'name', term])
-                    if res and res.returncode == 0:
-                        for line in res.stdout.splitlines():
-                            if line.startswith(' '):
-                                continue
-                            if ';' in line and ('installed' in line.lower() or 'available' in line.lower()):
-                                pkg_id = line.split()[-1]
-                                name = pkg_id.split(';')[0]
-                                apps.append(AppInfo(pkg_id, name, 'Paquete del sistema', 'system-software-install', 'PackageKit'))
-                except Exception:
-                    LOG.exception('Failed to load PackageKit apps')
+                    if search_term:
+                        res = subprocess.run(['pkcon', 'search', 'name', search_term], capture_output=True, text=True)
+                        if res.returncode == 0:
+                            current_pkg = {}
+                            for line in res.stdout.split('\n'):
+                                if line.startswith('Available') or line.startswith('Installed'):
+                                    if 'id' in current_pkg:
+                                        apps.append(AppInfo(current_pkg['id'], current_pkg['name'], current_pkg.get('summary', ''), 'system-software-install', 'PackageKit', current_pkg['installed']))
+                                    current_pkg = {'installed': line.startswith('Installed')}
+                                elif ':' in line:
+                                    k, v = line.split(':', 1)
+                                    k, v = k.strip().lower(), v.strip()
+                                    if k == 'package':
+                                        current_pkg['id'] = v
+                                        current_pkg['name'] = v.split(';')[0]
+                                    elif k == 'summary':
+                                        current_pkg['summary'] = v
+                            if 'id' in current_pkg:
+                                apps.append(AppInfo(current_pkg['id'], current_pkg['name'], current_pkg.get('summary', ''), 'system-software-install', 'PackageKit', current_pkg['installed']))
+                        else:
+                            LOG.warning('pkcon search failed: %s', res.stderr.strip())
+                except Exception as exc:
+                    LOG.exception('Failed to load PackageKit apps: %s', exc)
 
-            dedup = {}
-            for app in apps:
-                dedup[(app.backend, app.id)] = app
-            GLib.idle_add(self.emit, 'apps-loaded', list(dedup.values())[:100])
+            GLib.idle_add(self.emit, 'apps-loaded', apps)
 
         threading.Thread(target=_load, daemon=True).start()
 
     def load_installed_apps(self):
         def _load():
             apps = []
-
-            if self.settings.get_boolean('use-flatpak'):
-                try:
-                    res = self._run(['flatpak', 'list', '--app', '--columns=application,name,description,version,icon'])
-                    if res and res.returncode == 0:
-                        for line in res.stdout.splitlines():
-                            parts = [p.strip() for p in line.split('\t')]
-                            if len(parts) >= 2:
-                                apps.append(AppInfo(parts[0], parts[1], parts[2] if len(parts) > 2 else '', parts[4] if len(parts) > 4 and parts[4] else 'application-x-executable', 'Flatpak', True, parts[3] if len(parts) > 3 else ''))
-                except Exception:
-                    LOG.exception('Failed flatpak installed listing')
-
-            if self.settings.get_boolean('use-snap'):
-                try:
-                    res = self._run(['snap', 'list'])
-                    if res and res.returncode == 0:
-                        for line in res.stdout.splitlines()[1:]:
-                            parts = line.split()
-                            if parts:
-                                apps.append(AppInfo(parts[0], parts[0], 'Snap instalado', 'io.snapcraft.SnapStore', 'Snap', True, parts[1] if len(parts) > 1 else ''))
-                except Exception:
-                    LOG.exception('Failed snap installed listing')
+            try:
+                res = subprocess.run(['flatpak', 'list', '--columns=application,name,description,version,icon', '--app'], capture_output=True, text=True)
+                if res.returncode == 0:
+                    for line in res.stdout.strip().split('\n'):
+                        parts = line.split('\t')
+                        if len(parts) >= 2:
+                            apps.append(AppInfo(parts[0], parts[1], parts[2] if len(parts) > 2 else '', parts[4] if len(parts) > 4 else 'application-x-executable', 'Flatpak', True))
+                else:
+                    LOG.warning('flatpak list failed: %s', res.stderr.strip())
+            except Exception as exc:
+                LOG.exception('Failed to load installed apps: %s', exc)
 
             GLib.idle_add(self.emit, 'installed-loaded', apps)
 
@@ -153,28 +152,17 @@ class PackageManager(GObject.Object):
     def check_updates(self):
         def _load():
             updates = []
-
-            if self.settings.get_boolean('use-flatpak'):
-                try:
-                    res = self._run(['flatpak', 'remote-ls', '--updates', '--app', '--columns=application,name,version'])
-                    if res and res.returncode == 0:
-                        for line in res.stdout.splitlines():
-                            parts = [p.strip() for p in line.split('\t')]
-                            if len(parts) >= 2:
-                                updates.append(AppInfo(parts[0], parts[1], 'Actualización disponible', 'software-update-available', 'Flatpak', True, parts[2] if len(parts) > 2 else ''))
-                except Exception:
-                    LOG.exception('Failed flatpak update check')
-
-            if self.settings.get_boolean('use-snap'):
-                try:
-                    res = self._run(['snap', 'refresh', '--list'])
-                    if res and res.returncode == 0:
-                        for line in res.stdout.splitlines()[1:]:
-                            parts = line.split()
-                            if parts:
-                                updates.append(AppInfo(parts[0], parts[0], 'Actualización Snap disponible', 'software-update-available', 'Snap', True, parts[1] if len(parts) > 1 else ''))
-                except Exception:
-                    LOG.exception('Failed snap update check')
+            try:
+                res = subprocess.run(['flatpak', 'remote-ls', '--updates', '--columns=application,name,version'], capture_output=True, text=True)
+                if res.returncode == 0:
+                    for line in res.stdout.strip().split('\n'):
+                        parts = line.split('\t')
+                        if len(parts) >= 2:
+                            updates.append(AppInfo(parts[0], parts[1], 'Actualización disponible', 'software-update-available', 'Flatpak', True, version=parts[2] if len(parts) > 2 else ''))
+                else:
+                    LOG.warning('flatpak remote-ls --updates failed: %s', res.stderr.strip())
+            except Exception as exc:
+                LOG.exception('Failed to check updates: %s', exc)
 
             GLib.idle_add(self.emit, 'updates-loaded', updates)
 
@@ -184,26 +172,27 @@ class PackageManager(GObject.Object):
         def _install():
             success = False
             error_message = ''
+
             try:
                 if backend == 'Flatpak':
-                    res = self._run(['flatpak', 'install', '--user', '-y', app_id])
-                    if res and res.returncode != 0:
-                        res = self._run(['pkexec', 'flatpak', 'install', '-y', app_id])
-                    success = bool(res and res.returncode == 0)
-                    error_message = '' if success else (res.stderr.strip() if res else 'No se encontró flatpak')
+                    res = subprocess.run(['flatpak', 'install', '--user', '-y', app_id], capture_output=True, text=True)
+                    if res.returncode != 0:
+                        res = subprocess.run(['flatpak', 'install', '-y', app_id], capture_output=True, text=True)
+                    success = res.returncode == 0
+                    error_message = res.stderr.strip() if not success else ''
                 elif backend == 'Snap':
-                    res = self._run(['pkexec', 'snap', 'install', app_id])
-                    success = bool(res and res.returncode == 0)
-                    error_message = '' if success else (res.stderr.strip() if res else 'No se encontró snap')
+                    res = subprocess.run(['pkexec', 'snap', 'install', app_id], capture_output=True, text=True)
+                    success = res.returncode == 0
+                    error_message = res.stderr.strip() if not success else ''
                 elif backend == 'PackageKit':
-                    res = self._run(['pkexec', 'pkcon', 'install', '-y', app_id])
-                    success = bool(res and res.returncode == 0)
-                    error_message = '' if success else (res.stderr.strip() if res else 'No se encontró pkcon')
+                    res = subprocess.run(['pkcon', 'install', '-y', app_id], capture_output=True, text=True)
+                    success = res.returncode == 0
+                    error_message = res.stderr.strip() if not success else ''
                 else:
                     error_message = f'Backend no soportado: {backend}'
             except Exception as exc:
-                LOG.exception('Install failed for %s via %s', app_id, backend)
                 error_message = str(exc)
+                LOG.exception('Failed to install app %s with backend %s: %s', app_id, backend, exc)
 
             GLib.idle_add(self.emit, 'operation-completed', success, error_message)
 

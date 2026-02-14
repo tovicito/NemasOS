@@ -3,7 +3,7 @@ import os
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
-from gi.repository import Gtk, Adw, GLib, Gio, GObject
+from gi.repository import Gtk, Adw, GLib, Gio
 from const import APP_ID
 
 PKGDATADIR = os.environ.get('PKGDATADIR', '/app/share/tte.nemas.Epola')

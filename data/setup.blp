@@ -9,6 +9,7 @@ template $EpolaSetupWindow : Adw.Window {
 
   content: Adw.Bin {
     child: Adw.ViewStack setup_stack {
+      transition-type: slide-left-right;
 
       Adw.ViewStackPage {
         name: "welcome";
@@ -20,11 +21,11 @@ template $EpolaSetupWindow : Adw.Window {
           margin-bottom: 36;
           margin-start: 30;
           margin-end: 30;
-          styles: ["welcome-screen"];
+          styles ["welcome-screen"];
 
           Label {
             label: _("Bienvenido a Epola");
-            styles: ["title-1"];
+            styles ["title-1"];
             wrap: true;
             justify: center;
           }
@@ -33,13 +34,13 @@ template $EpolaSetupWindow : Adw.Window {
             label: _("Configura tu tienda para Flatpak, Snap y paquetes nativos.");
             wrap: true;
             justify: center;
-            styles: ["dim-label"];
+            styles ["dim-label"];
           }
 
           Button {
             label: _("Empezar");
             halign: center;
-            styles: ["suggested-action", "pill"];
+            styles ["suggested-action", "pill"];
             clicked => $on_next_clicked();
           }
         };
@@ -58,7 +59,7 @@ template $EpolaSetupWindow : Adw.Window {
 
           Label {
             label: _("Elige tema");
-            styles: ["title-2"];
+            styles ["title-2"];
             halign: center;
           }
 
@@ -68,7 +69,7 @@ template $EpolaSetupWindow : Adw.Window {
             spacing: 24;
 
             Button {
-              styles: ["card"];
+              styles ["card"];
               clicked => $on_theme_light_clicked();
               Box {
                 orientation: vertical;
@@ -83,7 +84,7 @@ template $EpolaSetupWindow : Adw.Window {
             }
 
             Button {
-              styles: ["card"];
+              styles ["card"];
               clicked => $on_theme_dark_clicked();
               Box {
                 orientation: vertical;
@@ -101,7 +102,7 @@ template $EpolaSetupWindow : Adw.Window {
           Button {
             label: _("Siguiente");
             halign: center;
-            styles: ["suggested-action"];
+            styles ["suggested-action"];
             margin-top: 12;
             clicked => $on_next_clicked();
           }
@@ -120,7 +121,7 @@ template $EpolaSetupWindow : Adw.Window {
 
           Label {
             label: _("Configuración inicial");
-            styles: ["title-3"];
+            styles ["title-3"];
             halign: start;
           }
 
@@ -138,7 +139,7 @@ template $EpolaSetupWindow : Adw.Window {
 
           Button {
             label: _("Finalizar");
-            styles: ["suggested-action"];
+            styles ["suggested-action"];
             margin-top: 20;
             clicked => $on_finish_clicked();
           }
