@@ -30,9 +30,45 @@ class PackageManager(GObject.Object):
         GObject.Object.__init__(self)
         self.settings = Gio.Settings.new('tte.nemas.Epola')
 
+    def _run(self, cmd):
+        if not cmd:
+            return None
+        if shutil.which(cmd[0]) is None:
+            LOG.info('Command not available: %s', cmd[0])
+            return None
+        return subprocess.run(cmd, capture_output=True, text=True)
+
+    def _flatpak_featured(self):
+        apps = []
+        remotes = self._run(['flatpak', 'remotes', '--columns=name'])
+        if not remotes or remotes.returncode != 0:
+            return apps
+
+        remote_list = [r.strip() for r in remotes.stdout.splitlines() if r.strip()]
+        for remote in remote_list:
+            listing = self._run(['flatpak', 'remote-ls', remote, '--app', '--columns=application,name,description,version,icon'])
+            if not listing or listing.returncode != 0:
+                continue
+            for line in listing.stdout.splitlines()[:60]:
+                parts = [p.strip() for p in line.split('\t')]
+                if len(parts) >= 2:
+                    apps.append(AppInfo(
+                        parts[0],
+                        parts[1] or parts[0],
+                        parts[2] if len(parts) > 2 else '',
+                        parts[4] if len(parts) > 4 and parts[4] else 'application-x-executable',
+                        'Flatpak',
+                        False,
+                        parts[3] if len(parts) > 3 else ''
+                    ))
+            if apps:
+                break
+        return apps
+
     def load_apps(self, search_term=None):
         def _load():
             apps = []
+            term = (search_term or '').strip()
 
             if self.settings.get_boolean('use-flatpak'):
                 try:

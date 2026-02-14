@@ -55,7 +55,7 @@ class EpolaApplication(Adw.Application):
                 from setup import EpolaSetupWindow
                 setup = EpolaSetupWindow(application=self)
                 setup.present()
-                setup.connect('destroy', lambda w: self.show_main_window())
+                setup.connect('setup-completed', lambda w: self.show_main_window())
             else:
                 self.show_main_window()
 
