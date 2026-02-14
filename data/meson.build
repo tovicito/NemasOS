@@ -49,7 +49,9 @@ foreach blp : blueprints
   compiled_ui += custom_target(blp.underscorify() + '_ui',
     input: blp,
     output: blp.replace('.blp', '.ui'),
-    command: [blueprint_compiler, 'compile', '--output', '@OUTPUT@', '@INPUT@']
+    command: [blueprint_compiler, 'compile', '--output', '@OUTPUT@', '@INPUT@'],
+    install: true,
+    install_dir: pkgdatadir,
   )
 endforeach
 
