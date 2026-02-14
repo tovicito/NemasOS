@@ -20,8 +20,10 @@ subdir('data')
 subdir('src')
 subdir('po')
 
-gnome.post_install(
-     glib_compile_schemas: true,
-    gtk_update_icon_cache: true,
-  update_desktop_database: true,
+python3 = find_program('python3')
+meson.add_install_script(
+  python3,
+  files('build-aux/post_install.py'),
+  get_option('prefix'),
+  get_option('datadir'),
 )
