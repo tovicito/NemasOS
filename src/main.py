@@ -6,15 +6,27 @@ from gi.repository import Gtk, Gio, Adw, Gdk
 
 # Handle package name and path
 APP_ID = 'tte.nemas.Epola'
-PKGDATADIR = os.environ.get('PKGDATADIR', os.path.join(os.path.dirname(__file__), '..', 'data'))
+
+# Logic for finding data dir
+PKGDATADIR = os.environ.get('PKGDATADIR')
+if not PKGDATADIR:
+    # Try common locations
+    for path in ['/app/share/tte.nemas.Epola', '/usr/local/share/tte.nemas.Epola', '/usr/share/tte.nemas.Epola']:
+        if os.path.exists(path):
+            PKGDATADIR = path
+            break
+if not PKGDATADIR:
+    # Fallback to local development path
+    PKGDATADIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data'))
 
 # Initialize gettext
 gettext.bindtextdomain(APP_ID, os.path.join(PKGDATADIR, 'locale'))
 gettext.textdomain(APP_ID)
 _ = gettext.gettext
 
-from .window import EpolaWindow
-from .setup import EpolaSetupWindow
+# Local imports
+from window import EpolaWindow
+from setup import EpolaSetupWindow
 
 class EpolaApplication(Adw.Application):
     def __init__(self):
@@ -45,6 +57,12 @@ class EpolaApplication(Adw.Application):
     def do_startup(self):
         Adw.Application.do_startup(self)
 
+        # Load resources
+        resource_file = os.path.join(PKGDATADIR, 'tte.nemas.Epola.gresource')
+        if os.path.exists(resource_file):
+            resource = Gio.Resource.load(resource_file)
+            resource._register()
+
         # Load CSS
         provider = Gtk.CssProvider()
         try:
@@ -57,29 +75,12 @@ class EpolaApplication(Adw.Application):
         except Exception as e:
             print(f"Could not load CSS: {e}")
 
-        # Load resources
-        resource_file = os.path.join(PKGDATADIR, 'tte.nemas.Epola.gresource')
-        if not os.path.exists(resource_file):
-             # Fallback for development structure
-             resource_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'tte.nemas.Epola.gresource')
-
-        if os.path.exists(resource_file):
-            resource = Gio.Resource.load(resource_file)
-            resource._register()
-
 def main():
     app = EpolaApplication()
     return app.run(sys.argv)
 
 if __name__ == '__main__':
-    # Add parent dir to path so we can do 'from . import ...' if run as script
-    # but it's better to run as a module.
-    # For now, this helper allows running directly.
-    if __package__ is None:
-        path = os.path.dirname(os.path.dirname(__file__))
-        sys.path.insert(0, path)
-        import src
-        __package__ = "src"
-
+    # Add src to path for direct execution
+    sys.path.insert(0, os.path.dirname(__file__))
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(main())
