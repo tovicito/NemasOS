@@ -31,6 +31,10 @@ _ = gettext.gettext
 
 logging.basicConfig(level=logging.INFO)
 
+# Local imports
+from window import EpolaWindow
+from setup import EpolaSetupWindow
+
 class EpolaApplication(Adw.Application):
     def __init__(self):
         super().__init__(application_id=APP_ID,

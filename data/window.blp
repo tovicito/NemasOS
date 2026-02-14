@@ -65,7 +65,7 @@ template $EpolaWindow : Adw.ApplicationWindow {
 
                 Label {
                   label: _("Aplicaciones Destacadas");
-                  styles ["heading"]
+                  styles ["heading"];
                   halign: start;
                 }
 
@@ -102,7 +102,6 @@ template $EpolaWindow : Adw.ApplicationWindow {
                 margin-bottom: 24;
                 margin-start: 24;
                 margin-end: 24;
-
                 FlowBox updates_grid {
                   selection-mode: none;
                   column-spacing: 12;
@@ -133,7 +132,6 @@ template $EpolaWindow : Adw.ApplicationWindow {
                 margin-bottom: 24;
                 margin-start: 24;
                 margin-end: 24;
-
                 FlowBox installed_grid {
                   selection-mode: none;
                   column-spacing: 12;
@@ -188,7 +186,7 @@ template $EpolaWindow : Adw.ApplicationWindow {
                 subtitle: _("Elimina preferencias y relanza asistente inicial");
                 Button reset_data_button {
                   label: _("Restablecer");
-                  styles ["destructive-action"]
+                  styles ["destructive-action"];
                   valign: center;
                   clicked => $on_reset_data_clicked();
                 }
