@@ -4,6 +4,9 @@ import signal
 import gettext
 import logging
 
+import gi
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gio, Adw, Gdk
 
 # Handle package name and path
@@ -49,6 +52,7 @@ class EpolaApplication(Adw.Application):
                 first_run = True
 
             if first_run:
+                from setup import EpolaSetupWindow
                 setup = EpolaSetupWindow(application=self)
                 setup.present()
                 setup.connect('destroy', lambda w: self.show_main_window())
@@ -56,6 +60,7 @@ class EpolaApplication(Adw.Application):
                 self.show_main_window()
 
     def show_main_window(self):
+        from window import EpolaWindow
         window = EpolaWindow(application=self)
         window.present()
 
