@@ -2,6 +2,11 @@ import sys
 import os
 import signal
 import gettext
+import logging
+
+import gi
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gio, Adw, Gdk
 
 # Handle package name and path
@@ -24,9 +29,7 @@ gettext.bindtextdomain(APP_ID, os.path.join(PKGDATADIR, 'locale'))
 gettext.textdomain(APP_ID)
 _ = gettext.gettext
 
-# Local imports
-from window import EpolaWindow
-from setup import EpolaSetupWindow
+logging.basicConfig(level=logging.INFO)
 
 class EpolaApplication(Adw.Application):
     def __init__(self):
@@ -40,10 +43,12 @@ class EpolaApplication(Adw.Application):
             try:
                 self.settings = Gio.Settings.new(APP_ID)
                 first_run = self.settings.get_boolean('first-run')
-            except:
+            except Exception:
+                logging.exception('No se pudo leer GSettings, asumiendo primer inicio')
                 first_run = True
 
             if first_run:
+                from setup import EpolaSetupWindow
                 setup = EpolaSetupWindow(application=self)
                 setup.present()
                 setup.connect('destroy', lambda w: self.show_main_window())
@@ -51,6 +56,7 @@ class EpolaApplication(Adw.Application):
                 self.show_main_window()
 
     def show_main_window(self):
+        from window import EpolaWindow
         window = EpolaWindow(application=self)
         window.present()
 
@@ -73,7 +79,7 @@ class EpolaApplication(Adw.Application):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         except Exception as e:
-            print(f"Could not load CSS: {e}")
+            logging.warning('Could not load CSS: %s', e)
 
 def main():
     app = EpolaApplication()

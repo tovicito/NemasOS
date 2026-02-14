@@ -1,7 +1,24 @@
+import os
+
+import gi
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, GLib, Gio, GObject
 from package_manager import PackageManager
 
-@Gtk.Template(resource_path='/tte/nemas/Epola/app_widget.ui')
+PKGDATADIR = os.environ.get('PKGDATADIR', '/app/share/tte.nemas.Epola')
+
+
+def _template_kwargs(ui_filename):
+    resource_path = f'/tte/nemas/Epola/{ui_filename}'
+    try:
+        Gio.resources_get_info(resource_path, Gio.ResourceLookupFlags.NONE)
+        return {'resource_path': resource_path}
+    except GLib.Error:
+        return {'filename': os.path.join(PKGDATADIR, ui_filename)}
+
+
+@Gtk.Template(**_template_kwargs('app_widget.ui'))
 class EpolaAppWidget(Gtk.Box):
     __gtype_name__ = 'EpolaAppWidget'
     __gsignals__ = {
@@ -31,7 +48,8 @@ class EpolaAppWidget(Gtk.Box):
         button.set_label("Instalando...")
         self.emit("install-requested", self.app_info)
 
-@Gtk.Template(resource_path='/tte/nemas/Epola/window.ui')
+
+@Gtk.Template(**_template_kwargs('window.ui'))
 class EpolaWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'EpolaWindow'
 

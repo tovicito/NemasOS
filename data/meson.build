@@ -49,13 +49,16 @@ foreach blp : blueprints
   compiled_ui += custom_target(blp.underscorify() + '_ui',
     input: blp,
     output: blp.replace('.blp', '.ui'),
-    command: [blueprint_compiler, 'compile', '--output', '@OUTPUT@', '@INPUT@']
+    command: [blueprint_compiler, 'compile', '--output', '@OUTPUT@', '@INPUT@'],
+    install: true,
+    install_dir: pkgdatadir,
   )
 endforeach
 
 resources = gnome.compile_resources('tte.nemas.Epola',
   'tte.nemas.Epola.gresource.xml',
   dependencies: compiled_ui,
+  source_dir: [meson.current_source_dir(), meson.current_build_dir()],
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
