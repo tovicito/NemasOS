@@ -3,39 +3,44 @@ using Adw 1;
 
 template $EpolaSetupWindow : Adw.Window {
   modal: true;
-  width-request: 500;
-  height-request: 600;
+  width-request: 520;
+  height-request: 620;
   resizable: false;
 
   content: Adw.Bin {
-    Adw.ViewStack setup_stack {
+    child: Adw.ViewStack setup_stack {
+      transition-type: slide-left-right;
+
       Adw.ViewStackPage {
         name: "welcome";
         child: Box {
           orientation: vertical;
           valign: center;
-          spacing: 24;
-          styles ["welcome-screen"]
-
-          Image {
-            icon-name: "tte.nemas.Epola";
-            pixel-size: 128;
-          }
+          spacing: 18;
+          margin-top: 36;
+          margin-bottom: 36;
+          margin-start: 30;
+          margin-end: 30;
+          styles ["welcome-screen"];
 
           Label {
             label: _("Bienvenido a Epola");
-            styles ["title-1"]
+            styles ["title-1"];
+            wrap: true;
+            justify: center;
           }
 
           Label {
-            label: _("La tienda de aplicaciones de NemasOS");
-            styles ["caption"]
+            label: _("Configura tu tienda para Flatpak, Snap y paquetes nativos.");
+            wrap: true;
+            justify: center;
+            styles ["dim-label"];
           }
 
           Button {
             label: _("Empezar");
             halign: center;
-            styles ["suggested-action", "pill"]
+            styles ["suggested-action", "pill"];
             clicked => $on_next_clicked();
           }
         };
@@ -43,9 +48,20 @@ template $EpolaSetupWindow : Adw.Window {
 
       Adw.ViewStackPage {
         name: "theme";
-        child: Adw.StatusPage {
-          title: _("Personaliza tu experiencia");
-          description: _("Elige el tema que más te guste");
+        child: Box {
+          orientation: vertical;
+          valign: center;
+          spacing: 18;
+          margin-top: 36;
+          margin-bottom: 36;
+          margin-start: 30;
+          margin-end: 30;
+
+          Label {
+            label: _("Elige tema");
+            styles ["title-2"];
+            halign: center;
+          }
 
           Box {
             orientation: horizontal;
@@ -53,23 +69,31 @@ template $EpolaSetupWindow : Adw.Window {
             spacing: 24;
 
             Button {
-              styles ["flat"]
+              styles ["card"];
               clicked => $on_theme_light_clicked();
               Box {
                 orientation: vertical;
-                spacing: 6;
-                Image { icon-name: "display-brightness-symbolic"; pixel-size: 64; }
+                spacing: 8;
+                margin-top: 14;
+                margin-bottom: 14;
+                margin-start: 14;
+                margin-end: 14;
+                Image { icon-name: "weather-clear-symbolic"; pixel-size: 36; }
                 Label { label: _("Claro"); }
               }
             }
 
             Button {
-              styles ["flat"]
+              styles ["card"];
               clicked => $on_theme_dark_clicked();
               Box {
                 orientation: vertical;
-                spacing: 6;
-                Image { icon-name: "display-night-symbolic"; pixel-size: 64; }
+                spacing: 8;
+                margin-top: 14;
+                margin-bottom: 14;
+                margin-start: 14;
+                margin-end: 14;
+                Image { icon-name: "weather-clear-night-symbolic"; pixel-size: 36; }
                 Label { label: _("Oscuro"); }
               }
             }
@@ -78,7 +102,8 @@ template $EpolaSetupWindow : Adw.Window {
           Button {
             label: _("Siguiente");
             halign: center;
-            margin-top: 24;
+            styles ["suggested-action"];
+            margin-top: 12;
             clicked => $on_next_clicked();
           }
         };
@@ -86,36 +111,40 @@ template $EpolaSetupWindow : Adw.Window {
 
       Adw.ViewStackPage {
         name: "features";
-        child: Adw.StatusPage {
-          title: _("Configuración inicial");
+        child: Box {
+          orientation: vertical;
+          spacing: 12;
+          margin-top: 24;
+          margin-bottom: 24;
+          margin-start: 24;
+          margin-end: 24;
 
-          Adw.Clamp {
-            Box {
-              orientation: vertical;
-              spacing: 12;
+          Label {
+            label: _("Configuración inicial");
+            styles ["title-3"];
+            halign: start;
+          }
 
-              Adw.ActionRow {
-                title: _("Actualizaciones Automáticas");
-                subtitle: _("Mantén tu sistema seguro");
-                Switch auto_updates_switch { active: true; valign: center; }
-              }
+          Adw.ActionRow {
+            title: _("Actualizaciones automáticas");
+            subtitle: _("Revisar updates en segundo plano");
+            Switch auto_updates_switch { valign: center; }
+          }
 
-              Adw.ActionRow {
-                title: _("Activar Repositorios PPA");
-                subtitle: _("Accede a más software");
-                Switch ppa_switch { active: false; valign: center; }
-              }
+          Adw.ActionRow {
+            title: _("Activar PPA (experimental)");
+            subtitle: _("Permite integrar repositorios adicionales");
+            Switch ppa_switch { valign: center; }
+          }
 
-              Button {
-                label: _("Finalizar");
-                styles ["suggested-action"]
-                margin-top: 24;
-                clicked => $on_finish_clicked();
-              }
-            }
+          Button {
+            label: _("Finalizar");
+            styles ["suggested-action"];
+            margin-top: 20;
+            clicked => $on_finish_clicked();
           }
         };
       }
-    }
+    };
   };
 }
