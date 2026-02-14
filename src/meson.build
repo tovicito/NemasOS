@@ -2,7 +2,7 @@ pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 moduledir = pkgdatadir / 'epola'
 
 conf = configuration_data()
-conf.set('PYTHON', py_installation.path())
+conf.set('PYTHON', py_installation.full_path())
 conf.set('APP_ID', 'tte.nemas.Epola')
 conf.set('VERSION', meson.project_version())
 conf.set('pkgdatadir', pkgdatadir)

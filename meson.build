@@ -9,12 +9,13 @@ gnome = import('gnome')
 
 python = import('python')
 py_installation = python.find_installation('python3')
+pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 
 conf = configuration_data()
 conf.set('APP_ID', 'tte.nemas.Epola')
 conf.set('VERSION', meson.project_version())
-conf.set('PYTHON', py_installation.path())
-conf.set('pkgdatadir', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
+conf.set('PYTHON', py_installation.full_path())
+conf.set('pkgdatadir', pkgdatadir)
 
 subdir('data')
 subdir('src')
