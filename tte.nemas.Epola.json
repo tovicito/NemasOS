@@ -1,5 +1,5 @@
 {
-    "app-id" : "tte.nemas.Epola",
+    "id" : "tte.nemas.Epola",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "47",
     "sdk" : "org.gnome.Sdk",
@@ -18,12 +18,11 @@
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",
-        "/share/pkgconfig",
-        "/share/aclocal",
         "/man",
-        "/share/man",
+        "/share/doc",
         "/share/gtk-doc",
-        "/share/vala",
+        "/share/man",
+        "/share/pkgconfig",
         "*.la",
         "*.a"
     ],
@@ -42,6 +41,7 @@
         },
         {
             "name" : "epola",
+            "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [
                 {
