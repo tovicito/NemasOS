@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/tte/nemas/Epola">
+    <file preprocess="xml-stripblanks">window.ui</file>
+    <file preprocess="xml-stripblanks">setup.ui</file>
+    <file preprocess="xml-stripblanks">app_widget.ui</file>
+    <file>style.css</file>
+  </gresource>
+</gresources>

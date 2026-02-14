@@ -1,0 +1,4 @@
+#!/bin/sh
+export PKGDATADIR=@pkgdatadir@
+export PYTHONPATH=$PKGDATADIR:$PYTHONPATH
+exec @PYTHON@ $PKGDATADIR/tte/nemas/Epola/main.py "$@"

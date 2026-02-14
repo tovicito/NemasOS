@@ -1,0 +1,121 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $EpolaSetupWindow : Adw.Window {
+  modal: true;
+  width-request: 500;
+  height-request: 600;
+  resizable: false;
+
+  content: Adw.Bin {
+    Adw.ViewStack setup_stack {
+      Adw.ViewStackPage {
+        name: "welcome";
+        child: Box {
+          orientation: vertical;
+          valign: center;
+          spacing: 24;
+          styles ["welcome-screen"]
+
+          Image {
+            icon-name: "tte.nemas.Epola";
+            pixel-size: 128;
+          }
+
+          Label {
+            label: _("Bienvenido a Epola");
+            styles ["title-1"]
+          }
+
+          Label {
+            label: _("La tienda de aplicaciones de NemasOS");
+            styles ["caption"]
+          }
+
+          Button {
+            label: _("Empezar");
+            halign: center;
+            styles ["suggested-action", "pill"]
+            clicked => $on_next_clicked();
+          }
+        };
+      }
+
+      Adw.ViewStackPage {
+        name: "theme";
+        child: Adw.StatusPage {
+          title: _("Personaliza tu experiencia");
+          description: _("Elige el tema que más te guste");
+
+          Box {
+            orientation: horizontal;
+            halign: center;
+            spacing: 24;
+
+            Button {
+              styles ["flat"]
+              clicked => $on_theme_light_clicked();
+              Box {
+                orientation: vertical;
+                spacing: 6;
+                Image { icon-name: "display-brightness-symbolic"; pixel-size: 64; }
+                Label { label: _("Claro"); }
+              }
+            }
+
+            Button {
+              styles ["flat"]
+              clicked => $on_theme_dark_clicked();
+              Box {
+                orientation: vertical;
+                spacing: 6;
+                Image { icon-name: "display-night-symbolic"; pixel-size: 64; }
+                Label { label: _("Oscuro"); }
+              }
+            }
+          }
+
+          Button {
+            label: _("Siguiente");
+            halign: center;
+            margin-top: 24;
+            clicked => $on_next_clicked();
+          }
+        };
+      }
+
+      Adw.ViewStackPage {
+        name: "features";
+        child: Adw.StatusPage {
+          title: _("Configuración inicial");
+
+          Adw.Clamp {
+            Box {
+              orientation: vertical;
+              spacing: 12;
+
+              Adw.ActionRow {
+                title: _("Actualizaciones Automáticas");
+                subtitle: _("Mantén tu sistema seguro");
+                Switch auto_updates_switch { active: true; valign: center; }
+              }
+
+              Adw.ActionRow {
+                title: _("Activar Repositorios PPA");
+                subtitle: _("Accede a más software");
+                Switch ppa_switch { active: false; valign: center; }
+              }
+
+              Button {
+                label: _("Finalizar");
+                styles ["suggested-action"]
+                margin-top: 24;
+                clicked => $on_finish_clicked();
+              }
+            }
+          }
+        };
+      }
+    }
+  };
+}
