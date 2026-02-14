@@ -1,0 +1,24 @@
+@keyframes color-change {
+  0% { background-color: @theme_bg_color; }
+  50% { background-color: alpha(@accent_color, 0.1); }
+  100% { background-color: @theme_bg_color; }
+}
+
+.welcome-screen {
+  animation: color-change 10s infinite alternate;
+}
+
+.app-card-image-bin {
+  background-color: @theme_bg_color;
+  border-radius: 12px;
+  margin: 12px;
+}
+
+.card {
+  transition: all 200ms ease-in-out;
+}
+
+.card:hover {
+  background-color: alpha(@accent_color, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

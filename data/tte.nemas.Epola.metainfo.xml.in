@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>tte.nemas.Epola</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Epola</name>
+  <summary>La mejor tienda de aplicaciones para NemasOS</summary>
+  <description>
+    <p>
+      Epola es una tienda de aplicaciones moderna, rápida y elegante diseñada para GNOME.
+      Permite gestionar paquetes de Flatpak, Snap y repositorios nativos a través de PackageKit.
+    </p>
+  </description>
+  <launchable type="desktop-id">tte.nemas.Epola.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>La pantalla principal de Epola</caption>
+      <image>https://example.org/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/tte-nemas/epola</url>
+  <developer_name>NemasOS Team</developer_name>
+</component>

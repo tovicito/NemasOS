@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="tte.nemas.Epola">
+  <schema id="tte.nemas.Epola" path="/tte/nemas/Epola/">
+    <key name="first-run" type="b">
+      <default>true</default>
+      <summary>First run flag</summary>
+    </key>
+    <key name="auto-updates" type="b">
+      <default>true</default>
+      <summary>Enable automatic updates</summary>
+    </key>
+    <key name="use-flatpak" type="b">
+      <default>true</default>
+      <summary>Use Flatpak backend</summary>
+    </key>
+    <key name="use-snap" type="b">
+      <default>false</default>
+      <summary>Use Snap backend</summary>
+    </key>
+    <key name="use-packagekit" type="b">
+      <default>true</default>
+      <summary>Use PackageKit backend</summary>
+    </key>
+    <key name="theme" type="s">
+      <default>'system'</default>
+      <summary>Application theme</summary>
+    </key>
+  </schema>
+</schemalist>

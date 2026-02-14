@@ -1,0 +1,50 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $EpolaAppWidget : Box {
+  orientation: vertical;
+  spacing: 8;
+  width-request: 180;
+  margin-start: 6;
+  margin-end: 6;
+  margin-top: 6;
+  margin-bottom: 6;
+
+  styles ["card"]
+
+  Adw.Bin {
+    height-request: 120;
+    styles ["app-card-image-bin"]
+    Image app_icon {
+      pixel-size: 64;
+      icon-name: "application-x-executable";
+    }
+  }
+
+  Box {
+    orientation: vertical;
+    margin-start: 12;
+    margin-end: 12;
+    margin-bottom: 12;
+
+    Label app_name {
+      label: "App Name";
+      styles ["heading"]
+      halign: start;
+      ellipsize: end;
+    }
+
+    Label app_summary {
+      label: "Short description of the app.";
+      styles ["caption"]
+      halign: start;
+      ellipsize: end;
+    }
+
+    Button install_button {
+      label: _("Instalar");
+      styles ["suggested-action"]
+      margin-top: 8;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Epola\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-10-27 12:00+0000\n"
+"PO-Revision-Date: 2023-10-27 12:00+0000\n"
+"Last-Translator: Tomás\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Explorar"
+msgstr "Explore"
+
+msgid "Actualizaciones"
+msgstr "Updates"
+
+msgid "Instalado"
+msgstr "Installed"
+
+msgid "Configuración"
+msgstr "Settings"
+
+msgid "Bienvenido a Epola"
+msgstr "Welcome to Epola"
+
+msgid "La tienda de aplicaciones de NemasOS"
+msgstr "The NemasOS App Store"
+
+msgid "Empezar"
+msgstr "Get Started"
+
+msgid "Siguiente"
+msgstr "Next"
+
+msgid "Finalizar"
+msgstr "Finish"
+
+msgid "Instalar"
+msgstr "Install"
+
+msgid "Todo al día"
+msgstr "Everything up to date"
+
+msgid "No hay actualizaciones pendientes."
+msgstr "No pending updates."
