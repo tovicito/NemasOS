@@ -9,7 +9,6 @@ template $EpolaSetupWindow : Adw.Window {
 
   content: Adw.Bin {
     child: Adw.ViewStack setup_stack {
-      transition-type: slide-left-right;
 
       Adw.ViewStackPage {
         name: "welcome";
@@ -120,7 +119,7 @@ template $EpolaSetupWindow : Adw.Window {
           margin-end: 24;
 
           Label {
-            label: _("Configuración inicial")
+            label: _("Configuración inicial");
             styles ["title-3"]
             halign: start;
           }
