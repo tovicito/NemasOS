@@ -3,6 +3,7 @@ import os
 import signal
 import gettext
 import logging
+
 from gi.repository import Gtk, Gio, Adw, Gdk
 
 # Handle package name and path
