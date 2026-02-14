@@ -1,5 +1,5 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
-moduledir = pkgdatadir / 'tte/nemas/Epola'
+moduledir = pkgdatadir / 'epola'
 
 conf = configuration_data()
 conf.set('PYTHON', py_installation.path())
@@ -21,6 +21,7 @@ epola_sources = [
   'setup.py',
   'package_manager.py',
   'const.py',
+  '__init__.py',
 ]
 
 install_data(epola_sources, install_dir: moduledir)

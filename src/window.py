@@ -1,5 +1,5 @@
 from gi.repository import Gtk, Adw, GLib, Gio, GObject
-from .package_manager import PackageManager
+from package_manager import PackageManager
 
 @Gtk.Template(resource_path='/tte/nemas/Epola/app_widget.ui')
 class EpolaAppWidget(Gtk.Box):
@@ -48,7 +48,7 @@ class EpolaWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        from .const import APP_ID
+        from const import APP_ID
         self.settings = Gio.Settings.new(APP_ID)
         self.settings.bind("auto-updates", self.auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind("use-flatpak", self.flatpak_switch, "active", Gio.SettingsBindFlags.DEFAULT)

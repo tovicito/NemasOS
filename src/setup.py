@@ -1,5 +1,5 @@
 from gi.repository import Gtk, Adw, GLib, Gio
-from .const import APP_ID
+from const import APP_ID
 
 @Gtk.Template(resource_path='/tte/nemas/Epola/setup.ui')
 class EpolaSetupWindow(Adw.Window):
