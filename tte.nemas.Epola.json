@@ -1,10 +1,10 @@
 {
-    "id" : "tte.nemas.Epola",
-    "runtime" : "org.gnome.Platform",
-    "runtime-version" : "47",
-    "sdk" : "org.gnome.Sdk",
-    "command" : "tte.nemas.Epola",
-    "finish-args" : [
+    "id": "tte.nemas.Epola",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "49",
+    "sdk": "org.gnome.Sdk",
+    "command": "tte.nemas.Epola",
+    "finish-args": [
         "--share=network",
         "--share=ipc",
         "--socket=fallback-x11",
@@ -15,7 +15,7 @@
         "--talk-name=org.freedesktop.Flatpak",
         "--talk-name=io.snapcraft.Launcher"
     ],
-    "cleanup" : [
+    "cleanup": [
         "/include",
         "/lib/pkgconfig",
         "/man",
@@ -26,27 +26,29 @@
         "*.la",
         "*.a"
     ],
-    "modules" : [
+    "modules": [
         {
-            "name" : "blueprint-compiler",
-            "buildsystem" : "meson",
-            "cleanup" : [ "*" ],
-            "sources" : [
+            "name": "blueprint-compiler",
+            "buildsystem": "meson",
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
-                    "tag" : "v0.16.0"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
+                    "tag": "v0.16.0"
                 }
             ]
         },
         {
-            "name" : "epola",
-            "builddir" : true,
-            "buildsystem" : "meson",
-            "sources" : [
+            "name": "epola",
+            "builddir": true,
+            "buildsystem": "meson",
+            "sources": [
                 {
-                    "type" : "dir",
-                    "path" : "."
+                    "type": "dir",
+                    "path": "."
                 }
             ]
         }

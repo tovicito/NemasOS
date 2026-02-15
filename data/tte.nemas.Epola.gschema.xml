@@ -21,6 +21,10 @@
       <default>true</default>
       <summary>Use PackageKit backend</summary>
     </key>
+    <key name="use-ppa" type="b">
+      <default>false</default>
+      <summary>Use PPA repositories</summary>
+    </key>
     <key name="theme" type="s">
       <default>'system'</default>
       <summary>Application theme</summary>
