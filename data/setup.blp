@@ -7,18 +7,8 @@ template $EpolaSetupWindow : Adw.Window {
   height-request: 620;
   resizable: false;
 
-  content: Box {
-    orientation: vertical;
-
-    Adw.HeaderBar {
-      title-widget: Adw.ViewSwitcher {
-        stack: setup_stack;
-        policy: wide;
-      };
-    }
-
-    Adw.ViewStack setup_stack {
-      vexpand: true;
+  content: Adw.Bin {
+    child: Adw.ViewStack setup_stack {
 
       Adw.ViewStackPage {
         name: "welcome";
@@ -58,7 +48,6 @@ template $EpolaSetupWindow : Adw.Window {
 
       Adw.ViewStackPage {
         name: "theme";
-        title: _("Tema");
         child: Box {
           orientation: vertical;
           valign: center;
@@ -89,10 +78,7 @@ template $EpolaSetupWindow : Adw.Window {
                 margin-bottom: 14;
                 margin-start: 14;
                 margin-end: 14;
-                Image {
-                  icon-name: "weather-clear-symbolic";
-                  pixel-size: 36;
-                }
+                Image { icon-name: "weather-clear-symbolic"; pixel-size: 36; }
                 Label { label: _("Claro"); }
               }
             }
@@ -107,10 +93,7 @@ template $EpolaSetupWindow : Adw.Window {
                 margin-bottom: 14;
                 margin-start: 14;
                 margin-end: 14;
-                Image {
-                  icon-name: "weather-clear-night-symbolic";
-                  pixel-size: 36;
-                }
+                Image { icon-name: "weather-clear-night-symbolic"; pixel-size: 36; }
                 Label { label: _("Oscuro"); }
               }
             }
@@ -128,7 +111,6 @@ template $EpolaSetupWindow : Adw.Window {
 
       Adw.ViewStackPage {
         name: "features";
-        title: _("Ajustes");
         child: Box {
           orientation: vertical;
           spacing: 12;
@@ -146,9 +128,20 @@ template $EpolaSetupWindow : Adw.Window {
           Adw.ActionRow {
             title: _("Actualizaciones automáticas");
             subtitle: _("Revisar updates en segundo plano");
-            Switch auto_updates_switch {
-              valign: center;
-            }
+            Switch auto_updates_switch { valign: center; }
+          }
+
+          Adw.ActionRow {
+            title: _("Activar PPA (experimental)");
+            subtitle: _("Permite integrar repositorios adicionales");
+            Switch ppa_switch { valign: center; }
+          }
+
+          Button {
+            label: _("Finalizar");
+            styles ["suggested-action"]
+            margin-top: 20;
+            clicked => $on_finish_clicked();
           }
 
           Adw.ActionRow {
@@ -167,6 +160,6 @@ template $EpolaSetupWindow : Adw.Window {
           }
         };
       }
-    }
+    };
   };
 }
