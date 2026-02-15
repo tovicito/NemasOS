@@ -1,18 +1,33 @@
+import os
+
+import gi
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, GLib, Gio
 from const import APP_ID
 
-@Gtk.Template(resource_path='/tte/nemas/Epola/setup.ui')
+PKGDATADIR = os.environ.get('PKGDATADIR', '/app/share/tte.nemas.Epola')
+
+
+def _template_kwargs(ui_filename):
+    resource_path = f'/tte/nemas/Epola/{ui_filename}'
+    try:
+        Gio.resources_get_info(resource_path, Gio.ResourceLookupFlags.NONE)
+        return {'resource_path': resource_path}
+    except GLib.Error:
+        return {'filename': os.path.join(PKGDATADIR, ui_filename)}
+
+
+@Gtk.Template(**_template_kwargs('setup.ui'))
 class EpolaSetupWindow(Adw.Window):
     __gtype_name__ = 'EpolaSetupWindow'
-
     setup_stack = Gtk.Template.Child()
-    auto_updates_switch = Gtk.Template.Child()
-    ppa_switch = Gtk.Template.Child()
+    setup_auto_updates_switch = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings = Gio.Settings.new(APP_ID)
-        self.settings.bind("auto-updates", self.auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind("auto-updates", self.setup_auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
 
     @Gtk.Template.Callback()
     def on_next_clicked(self, button):

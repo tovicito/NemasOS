@@ -2,16 +2,16 @@ using Gtk 4.0;
 using Adw 1;
 
 template $EpolaWindow : Adw.ApplicationWindow {
-  default-width: 900;
-  default-height: 700;
+  default-width: 940;
+  default-height: 720;
   title: "Epola";
 
-  content: Adw.ToastOverlay {
+  content: Adw.ToastOverlay toast_overlay {
     child: Box {
       orientation: vertical;
 
       Adw.HeaderBar {
-        title-widget: Adw.ViewStackSwitcher {
+        title-widget: Adw.ViewSwitcher {
           stack: main_stack;
         };
 
@@ -19,6 +19,13 @@ template $EpolaWindow : Adw.ApplicationWindow {
         ToggleButton search_button {
           icon-name: "system-search-symbolic";
           tooltip-text: _("Buscar");
+        }
+
+        [end]
+        Button refresh_updates_button {
+          icon-name: "view-refresh-symbolic";
+          tooltip-text: _("Refrescar actualizaciones");
+          clicked => $on_refresh_updates_clicked();
         }
 
         [end]
@@ -44,33 +51,38 @@ template $EpolaWindow : Adw.ApplicationWindow {
           name: "explore";
           title: _("Explorar");
           icon-name: "explore-symbolic";
-          child: Adw.Bin {
-            ScrolledWindow {
-              Adw.Clamp {
-                maximum-size: 1000;
-                tightening-threshold: 600;
-                Box {
-                  orientation: vertical;
-                  spacing: 24;
-                  margin-top: 24;
-                  margin-bottom: 24;
-                  margin-start: 12;
-                  margin-end: 12;
+          child: ScrolledWindow {
+            Adw.Clamp {
+              maximum-size: 1000;
+              tightening-threshold: 600;
+              Box {
+                orientation: vertical;
+                spacing: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+                margin-start: 12;
+                margin-end: 12;
 
-                  Label {
-                    label: _("Aplicaciones Destacadas");
-                    styles ["heading"]
-                    halign: start;
-                  }
+                Label {
+                  label: _("Aplicaciones Destacadas");
+                  styles ["heading"]
+                  halign: start;
+                }
 
-                  FlowBox explore_grid {
-                    valign: start;
-                    max-children-per-line: 4;
-                    min-children-per-line: 1;
-                    selection-mode: none;
-                    column-spacing: 12;
-                    row-spacing: 12;
-                  }
+                FlowBox explore_grid {
+                  valign: start;
+                  max-children-per-line: 4;
+                  min-children-per-line: 1;
+                  selection-mode: none;
+                  column-spacing: 12;
+                  row-spacing: 12;
+                }
+
+                Adw.StatusPage explore_empty_page {
+                  visible: false;
+                  title: _("No se encontraron aplicaciones");
+                  description: _("Activa un backend o prueba otra búsqueda");
+                  icon-name: "system-search-symbolic";
                 }
               }
             }
@@ -86,12 +98,17 @@ template $EpolaWindow : Adw.ApplicationWindow {
               Box {
                 orientation: vertical;
                 spacing: 24;
-                margin: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+                margin-start: 24;
+                margin-end: 24;
+
                 FlowBox updates_grid {
                   selection-mode: none;
                   column-spacing: 12;
                   row-spacing: 12;
                 }
+
                 Adw.StatusPage updates_empty_page {
                   visible: false;
                   title: _("Todo al día");
@@ -112,11 +129,21 @@ template $EpolaWindow : Adw.ApplicationWindow {
               Box {
                 orientation: vertical;
                 spacing: 24;
-                margin: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+                margin-start: 24;
+                margin-end: 24;
+
                 FlowBox installed_grid {
                   selection-mode: none;
                   column-spacing: 12;
                   row-spacing: 12;
+                }
+
+                Adw.StatusPage installed_empty_page {
+                  visible: false;
+                  title: _("No hay apps instaladas detectadas");
+                  icon-name: "system-software-install-symbolic";
                 }
               }
             }
@@ -134,42 +161,36 @@ template $EpolaWindow : Adw.ApplicationWindow {
               Adw.ActionRow {
                 title: _("Actualizaciones Automáticas");
                 subtitle: _("Descargar e instalar actualizaciones en segundo plano");
-                Switch auto_updates_switch {
-                  active: true;
-                  valign: center;
-                }
+                Switch auto_updates_switch { active: true; valign: center; }
               }
 
-              Adw.ComboRow {
-                title: _("Tema");
-                model: StringList {
-                  strings ["Sistema", "Claro", "Oscuro"]
-                };
+              Adw.ActionRow {
+                title: _("Usar repositorios PPA");
+                subtitle: _("Experimental");
+                Switch ppa_switch { active: false; valign: center; }
               }
             }
 
             Adw.PreferencesGroup {
               title: _("Gestores de Paquetes");
 
+              Adw.ActionRow { title: "Flatpak"; Switch flatpak_switch { active: true; valign: center; } }
+              Adw.ActionRow { title: "Snap"; Switch snap_switch { active: false; valign: center; } }
+              Adw.ActionRow { title: "PackageKit (Nativo)"; Switch packagekit_switch { active: true; valign: center; } }
+            }
+
+            Adw.PreferencesGroup {
+              title: _("Datos");
+              description: _("Borrar configuración y volver a mostrar el setup inicial");
+
               Adw.ActionRow {
-                title: "Flatpak";
-                Switch flatpak_switch {
-                  active: true;
+                title: _("Restablecer Epola");
+                subtitle: _("Elimina preferencias y relanza asistente inicial");
+                Button reset_data_button {
+                  label: _("Restablecer");
+                  styles ["destructive-action"]
                   valign: center;
-                }
-              }
-              Adw.ActionRow {
-                title: "Snap";
-                Switch snap_switch {
-                  active: false;
-                  valign: center;
-                }
-              }
-              Adw.ActionRow {
-                title: "PackageKit (Nativo)";
-                Switch packagekit_switch {
-                  active: true;
-                  valign: center;
+                  clicked => $on_reset_data_clicked();
                 }
               }
             }
