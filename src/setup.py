@@ -3,7 +3,7 @@ import os
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
-from gi.repository import Gtk, Adw, GLib, Gio, GObject
+from gi.repository import Gtk, Adw, GLib, Gio
 from const import APP_ID
 
 PKGDATADIR = os.environ.get('PKGDATADIR', '/app/share/tte.nemas.Epola')
@@ -32,8 +32,8 @@ class EpolaSetupWindow(Adw.Window):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings = Gio.Settings.new(APP_ID)
-        self.settings.bind("auto-updates", self.setup_auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind("use-ppa", self.setup_ppa_switch, "active", Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind("auto-updates", self.auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind("use-ppa", self.ppa_switch, "active", Gio.SettingsBindFlags.DEFAULT)
 
     @Gtk.Template.Callback()
     def on_next_clicked(self, button):
