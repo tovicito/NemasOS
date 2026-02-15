@@ -26,8 +26,8 @@ class EpolaSetupWindow(Adw.Window):
     }
 
     setup_stack = Gtk.Template.Child()
-    auto_updates_switch = Gtk.Template.Child()
-    ppa_switch = Gtk.Template.Child()
+    setup_auto_updates_switch = Gtk.Template.Child()
+    setup_ppa_switch = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
