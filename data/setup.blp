@@ -12,6 +12,7 @@ template $EpolaSetupWindow : Adw.Window {
 
       Adw.ViewStackPage {
         name: "welcome";
+        title: _("Bienvenida");
         child: Box {
           orientation: vertical;
           valign: center;
@@ -134,6 +135,21 @@ template $EpolaSetupWindow : Adw.Window {
             title: _("Activar PPA (experimental)");
             subtitle: _("Permite integrar repositorios adicionales");
             Switch ppa_switch { valign: center; }
+          }
+
+          Button {
+            label: _("Finalizar");
+            styles ["suggested-action"]
+            margin-top: 20;
+            clicked => $on_finish_clicked();
+          }
+
+          Adw.ActionRow {
+            title: _("Activar PPA (experimental)");
+            subtitle: _("Permite integrar repositorios adicionales");
+            Switch ppa_switch {
+              valign: center;
+            }
           }
 
           Button {
