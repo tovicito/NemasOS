@@ -9,19 +9,22 @@ gnome = import('gnome')
 
 python = import('python')
 py_installation = python.find_installation('python3')
+pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 
 conf = configuration_data()
 conf.set('APP_ID', 'tte.nemas.Epola')
 conf.set('VERSION', meson.project_version())
-conf.set('PYTHON', py_installation.path())
-conf.set('pkgdatadir', join_paths(get_option('prefix'), get_option('datadir'), meson.project_name()))
+conf.set('PYTHON', py_installation.full_path())
+conf.set('pkgdatadir', pkgdatadir)
 
 subdir('data')
 subdir('src')
 subdir('po')
 
-gnome.post_install(
-     glib_compile_schemas: true,
-    gtk_update_icon_cache: true,
-  update_desktop_database: true,
+python3 = find_program('python3')
+meson.add_install_script(
+  python3,
+  files('build-aux/post_install.py'),
+  get_option('prefix'),
+  get_option('datadir'),
 )
