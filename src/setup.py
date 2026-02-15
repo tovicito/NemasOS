@@ -21,13 +21,19 @@ def _template_kwargs(ui_filename):
 @Gtk.Template(**_template_kwargs('setup.ui'))
 class EpolaSetupWindow(Adw.Window):
     __gtype_name__ = 'EpolaSetupWindow'
+    __gsignals__ = {
+        'setup-completed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+    }
+
     setup_stack = Gtk.Template.Child()
     setup_auto_updates_switch = Gtk.Template.Child()
+    setup_ppa_switch = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings = Gio.Settings.new(APP_ID)
-        self.settings.bind("auto-updates", self.setup_auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind("auto-updates", self.auto_updates_switch, "active", Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind("use-ppa", self.ppa_switch, "active", Gio.SettingsBindFlags.DEFAULT)
 
     @Gtk.Template.Callback()
     def on_next_clicked(self, button):
@@ -59,4 +65,5 @@ class EpolaSetupWindow(Adw.Window):
     @Gtk.Template.Callback()
     def on_finish_clicked(self, button):
         self.settings.set_boolean('first-run', False)
+        self.emit('setup-completed')
         self.close()

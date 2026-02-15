@@ -31,6 +31,10 @@ _ = gettext.gettext
 
 logging.basicConfig(level=logging.INFO)
 
+# Local imports
+from window import EpolaWindow
+from setup import EpolaSetupWindow
+
 class EpolaApplication(Adw.Application):
     def __init__(self):
         super().__init__(application_id=APP_ID,
@@ -51,7 +55,7 @@ class EpolaApplication(Adw.Application):
                 from setup import EpolaSetupWindow
                 setup = EpolaSetupWindow(application=self)
                 setup.present()
-                setup.connect('destroy', lambda w: self.show_main_window())
+                setup.connect('setup-completed', lambda w: self.show_main_window())
             else:
                 self.show_main_window()
 
